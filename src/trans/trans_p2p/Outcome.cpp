@@ -71,11 +71,13 @@ bool Outcome::sendFile()
         m_view->logIt(m_logIdent + " Can't open file");
         return false;
     }
-    m_view->logIt(m_logIdent + " Reading: " + m_filePath);
 
     QFileInfo fileInfo(file);
     QString name = fileInfo.fileName();
     QByteArray content = file.readAll();
+
+    m_view->logIt(m_logIdent + " Sending file: " + m_filePath
+                                 + ", Content size: " + std::to_string(content.size()));
 
     QDataStream socketStream(m_socket);
     socketStream << name << content;

@@ -19,7 +19,7 @@ public:
 
     // --- ITrans ----------------------------
     virtual bool init(const IViewSPtr& view, const IConfSPtr& conf) override;
-    virtual bool exec(int argc, char *argv[]) override;
+    virtual bool exec() override;
     virtual bool attach(IConnectionListener* lis) override;
     virtual bool detach(IConnectionListener* lis) override;
     // ---------------------------------------

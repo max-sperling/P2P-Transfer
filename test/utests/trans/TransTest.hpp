@@ -3,11 +3,11 @@
 /* Author: Max Sperling */
 /************************/
 
-class TransTest
+#include <gtest/gtest.h>
+
+class TransTest : public testing::Test
 {
-public:
+protected:
     TransTest();
     ~TransTest();
-
-    bool exec(int argc, char *argv[]);
 };

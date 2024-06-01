@@ -24,7 +24,7 @@ bool TransferApp::exec(int argc, char *argv[])
     ITransSPtr trans = TransFactory::create(m_transType);
 
     if(!trans->init(view, conf)) return false;
-    if(!trans->exec(argc, argv)) return false;
+    if(!trans->exec()) return false;
 
     app.exec();
 

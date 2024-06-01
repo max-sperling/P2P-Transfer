@@ -54,6 +54,8 @@ void Income::run()
 // ***** Slots *************************************************************************************
 void Income::onGotTCPStream()
 {
+    if (!m_socket->bytesAvailable()) { return; }
+
     QByteArray data = m_socket->readAll();
     QDataStream datastream(data);
 
@@ -80,7 +82,10 @@ void Income::onGotTCPStream()
         m_view->logIt(m_logIdent + " Can't open file");
         return;
     }
-    m_view->logIt(m_logIdent + " Writing: " + m_fileName);
+
+    m_view->logIt(m_logIdent + " Received packet: " + m_fileName
+                                 + ", Content size: " + std::to_string(content.size())
+                                 + ", Append mode: " + (isInit ? "no" : "yes"));
 
     file.write(content);
     file.close();

@@ -11,8 +11,6 @@ TransferTest::~TransferTest() {}
 
 bool TransferTest::exec(int argc, char *argv[])
 {
-    TransTest transTest;
-    transTest.exec(argc, argv);
-
-    return true;
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

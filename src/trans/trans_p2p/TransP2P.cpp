@@ -21,7 +21,7 @@ bool TransP2P::init(const IViewSPtr& view, const IConfSPtr& conf)
     return true;
 }
 
-bool TransP2P::exec(int argc, char *argv[])
+bool TransP2P::exec()
 {
     m_view->start();
 

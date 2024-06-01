@@ -18,11 +18,7 @@ public:
      */
     virtual bool init(const IViewSPtr& view, const IConfSPtr& conf) = 0;
 
-    /**
-     * @param[in] argc ... Argument count
-     * @param[in] argv ... Argument vector
-     */
-    virtual bool exec(int argc, char *argv[]) = 0;
+    virtual bool exec() = 0;
 
     /**
      * @param[in] lis ... Connection listener
