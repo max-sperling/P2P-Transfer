@@ -10,6 +10,21 @@
 
 using namespace std;
 
+namespace {
+    bool openFile(QFile& file, QIODevice::OpenModeFlag mode, const IViewSPtr view, std::string logIdent)
+    {
+        bool isOpen = file.open(QIODevice::WriteOnly | QIODevice::Append);
+
+        if (!isOpen)
+        {
+            view->logIt(logIdent + " Can't open file " + file.fileName().toStdString());
+            return false;
+        }
+
+        return true;
+    }
+}
+
 // ***** Public ************************************************************************************
 Income::Income(IViewSPtr view, const shared_ptr<ConnectionDetails>& det,
                const shared_ptr<IConLisVec>& lis, qintptr socketId)
@@ -42,7 +57,7 @@ void Income::run()
         return;
     }
 
-    connect(m_socket, SIGNAL(readyRead()), this, SLOT(onGotTCPStream()));
+    connect(m_socket, SIGNAL(readyRead()), this, SLOT(onReceivedData()));
     connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 
     m_view->logIt(m_logIdent + " Connected");
@@ -52,43 +67,44 @@ void Income::run()
 // *************************************************************************************************
 
 // ***** Slots *************************************************************************************
-void Income::onGotTCPStream()
+void Income::onReceivedData()
 {
-    if (!m_socket->bytesAvailable()) { return; }
-
-    QByteArray data = m_socket->readAll();
-    QDataStream datastream(data);
-
-    bool isInit = m_fileName.empty();
-    if(isInit)
+    if (m_fileName.empty() && m_socket->canReadLine())
     {
         QDir().mkdir(QString::fromStdString(m_conDet->m_dir));
 
-        QString name;
-        datastream >> name;
+        QString name = QString::fromUtf8(m_socket->readLine()).trimmed();
         m_fileName = name.toStdString();
+
+        string filePath = m_conDet->m_dir + "/" + m_fileName;
+        QFile file(QString::fromStdString(filePath));
+
+        if (!openFile(file, QIODevice::WriteOnly, m_view, m_logIdent)) { return; }
+        file.resize(0);
+        file.close();
+
+        m_view->logIt(m_logIdent + " Created file: " + m_fileName);
     }
 
-    QByteArray content;
-    datastream >> content;
-
-    string filePath = m_conDet->m_dir + "/" + m_fileName;
-    QFile file(QString::fromStdString(filePath));
-
-    bool isOpen = isInit ? file.open(QIODevice::WriteOnly)
-                         : file.open(QIODevice::WriteOnly | QIODevice::Append);
-    if (!isOpen)
+    if (!m_fileName.empty() && m_socket->bytesAvailable())
     {
-        m_view->logIt(m_logIdent + " Can't open file");
-        return;
+        string filePath = m_conDet->m_dir + "/" + m_fileName;
+        QFile file(QString::fromStdString(filePath));
+
+        if (!openFile(file, QIODevice::Append, m_view, m_logIdent)) { return; }
+
+        while (m_socket->bytesAvailable())
+        {
+            QByteArray content = m_socket->readAll();
+
+            m_view->logIt(m_logIdent + " Received data for file: " + m_fileName
+                                         + ", Content size: " + std::to_string(content.size()));
+
+            file.write(content);
+        }
+
+        file.close();
     }
-
-    m_view->logIt(m_logIdent + " Received packet: " + m_fileName
-                                 + ", Content size: " + std::to_string(content.size())
-                                 + ", Append mode: " + (isInit ? "no" : "yes"));
-
-    file.write(content);
-    file.close();
 }
 
 void Income::onDisconnected()

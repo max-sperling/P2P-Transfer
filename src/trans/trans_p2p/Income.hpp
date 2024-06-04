@@ -36,6 +36,6 @@ private:
     QTcpSocket* m_socket;
 
 private slots:
-    void onGotTCPStream();
+    void onReceivedData();
     void onDisconnected();
 };

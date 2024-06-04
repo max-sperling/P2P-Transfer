@@ -79,8 +79,8 @@ bool Outcome::sendFile()
     m_view->logIt(m_logIdent + " Sending file: " + m_filePath
                                  + ", Content size: " + std::to_string(content.size()));
 
-    QDataStream socketStream(m_socket);
-    socketStream << name << content;
+    m_socket->write(name.toUtf8() + "\n");
+    m_socket->write(content);
 
     file.close();
 
