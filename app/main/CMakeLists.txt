@@ -1,4 +1,4 @@
-project (Transfer-App)
+project (Main-app)
 
 set (MAIN_SRC Main.cpp ${CMAKE_SOURCE_DIR}/src/TransferApp.cpp)
 

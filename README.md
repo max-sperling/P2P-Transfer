@@ -1,13 +1,19 @@
 # P2P-Transfer
 
 ## Description
-"P2P-Transfer" uses TCP to receive/send files from/to another peer.
+- "P2P-Transfer" uses TCP to receive/send files from/to another peer.
 
 ## Requirements
-- CMake (Version >= 3.5)
+- CMake (Version >= 3.13)
 - C++-Compiler (Standard >= C++17)
 - Qt (Version = 6)
-- GTest
+- GTest (Only for tests)
 
-## Meta-Build
-cmake -H. -Bbuild
+## Build the project
+
+### Meta build
+- cmake -S . -B build
+
+### Actual build
+- Main-app: cmake --build build --target Main-app
+- Test-app: cmake --build build --target Test-app

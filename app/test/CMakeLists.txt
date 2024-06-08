@@ -1,4 +1,4 @@
-project (Transfer-Test)
+project (Test-app)
 
 set (TEST_SRC Test.cpp ${CMAKE_SOURCE_DIR}/test/TransferTest.cpp)
 
