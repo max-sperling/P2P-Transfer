@@ -11,9 +11,13 @@
 
 ## Build the project
 
-### Meta build
+### 1. Setup
 - cmake -S . -B build
 
-### Actual build
+### 2. Build
+- All: cmake --build build
 - Main-app: cmake --build build --target Main-app
 - Test-app: cmake --build build --target Test-app
+
+### 3. Install
+- Main-app: cmake --install build --prefix "install"
