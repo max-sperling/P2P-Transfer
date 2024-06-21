@@ -9,11 +9,8 @@
 #include "trans/ITrans.hpp"
 #include <QApplication>
 
-TransferApp::TransferApp(const ViewType viewType, const ConfType confType,
-                         const TransType transType)
+TransferApp::TransferApp(const ViewType viewType, const ConfType confType, const TransType transType)
     : m_viewType(viewType), m_confType(confType), m_transType(transType) {}
-
-TransferApp::~TransferApp() {}
 
 bool TransferApp::exec(int argc, char *argv[])
 {

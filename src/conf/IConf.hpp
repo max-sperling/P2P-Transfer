@@ -9,7 +9,7 @@
 class IConf
 {
 public:
-    virtual ~IConf() {}
+    virtual ~IConf() = default;
 
     /**
      * @param[out] det ... Connection details
@@ -19,14 +19,12 @@ public:
 
 struct ConnectionDetails
 {
-    ConnectionDetails()
-        : m_addr(""), m_port(0), m_dir("") {}
+    ConnectionDetails() = default;
 
-    ConnectionDetails(const std::string& addr, unsigned int port,
-                      const std::string& dir)
+    ConnectionDetails(const std::string& addr, unsigned int port, const std::string& dir)
         : m_addr(addr), m_port(port), m_dir(dir) {}
 
-    std::string m_addr;
-    unsigned int m_port;
-    std::string m_dir;
+    std::string m_addr{""};
+    unsigned int m_port{0};
+    std::string m_dir{""};
 };

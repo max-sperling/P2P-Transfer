@@ -11,7 +11,6 @@
 #include "view/ViewDouble.hpp"
 #include <QCoreApplication>
 #include <QTimer>
-#include <iostream>
 #include <filesystem>
 #include <fstream>
 
@@ -28,11 +27,9 @@ namespace
     public:
         ConLis(QCoreApplication* app) : m_app(app) {}
 
-        virtual void onConnectionStarted(const string& file,
-            const IConnectionListener::ConnectionType type) {}
+        void onConnectionStarted(const string& file, const IConnectionListener::ConnectionType type) override {}
 
-        virtual void onConnectionFinished(const string& file,
-            const IConnectionListener::ConnectionType type)
+        void onConnectionFinished(const string& file, const IConnectionListener::ConnectionType type) override
         {
             if (type == IConnectionListener::ConnectionType::INCOMING)
             {

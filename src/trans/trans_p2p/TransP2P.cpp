@@ -3,15 +3,9 @@
 /************************/
 
 #include "trans/trans_p2p/TransP2P.hpp"
-#include "trans/trans_p2p/Server.hpp"
-#include "trans/trans_p2p/Client.hpp"
 #include "conf/IConf.hpp"
 
 using namespace std;
-
-TransP2P::TransP2P() {}
-
-TransP2P::~TransP2P() {}
 
 bool TransP2P::init(const IViewSPtr& view, const IConfSPtr& conf)
 {

@@ -10,7 +10,7 @@
 class ITrans
 {
 public:
-    virtual ~ITrans(){}
+    virtual ~ITrans() = default;
 
     /**
      * @param[in] viewPtr ... View
@@ -34,7 +34,7 @@ public:
 class IConnectionListener
 {
 public:
-    virtual ~IConnectionListener() {}
+    virtual ~IConnectionListener() = default;
 
     enum ConnectionType { OUTGOING, INCOMING };
 
@@ -42,13 +42,11 @@ public:
      * @param[in] file ... File name
      * @param[in] type ... Connection type
      */
-    virtual void onConnectionStarted(const std::string& file,
-        const ConnectionType type) = 0;
+    virtual void onConnectionStarted(const std::string& file, const ConnectionType type) = 0;
 
     /**
      * @param[in] file ... File name
      * @param[in] type ... Connection type
      */
-    virtual void onConnectionFinished(const std::string& file,
-        const ConnectionType type) = 0;
+    virtual void onConnectionFinished(const std::string& file, const ConnectionType type) = 0;
 };

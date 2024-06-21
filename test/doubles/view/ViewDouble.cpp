@@ -7,10 +7,6 @@
 
 using namespace std;
 
-ViewDouble::ViewDouble() {}
-
-ViewDouble::~ViewDouble() {}
-
 bool ViewDouble::start()
 {
     return true;

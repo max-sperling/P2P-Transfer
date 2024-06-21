@@ -35,6 +35,7 @@ Income::Income(IViewSPtr view, const shared_ptr<ConnectionDetails>& det,
     m_socketId = socketId;
     m_fileName = "";
     m_logIdent = "[Server][" + to_string(m_socketId) + "]";
+    m_socket = nullptr;
 }
 
 Income::~Income()

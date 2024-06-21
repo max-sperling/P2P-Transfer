@@ -20,9 +20,8 @@ public:
      * @param[in] det  ... Connection details
      * @param[in] lis  ... Connection listener
      */
-    Server(IViewSPtr view, const std::shared_ptr<ConnectionDetails>& det,
-        const std::shared_ptr<IConLisVec>& lis);
-    ~Server();
+    Server(IViewSPtr view, const std::shared_ptr<ConnectionDetails>& det, const std::shared_ptr<IConLisVec>& lis);
+    ~Server() override = default;
 
     bool init();
 

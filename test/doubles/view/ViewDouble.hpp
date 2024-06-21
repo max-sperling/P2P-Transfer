@@ -10,9 +10,6 @@
 class ViewDouble : public IView
 {
 public:
-    ViewDouble();
-    ~ViewDouble();
-
     // --- IView -----------------------------
     bool start() override;
     void logIt(const std::string& msg) override;

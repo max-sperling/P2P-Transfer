@@ -19,6 +19,7 @@ Outcome::Outcome(IViewSPtr view, const shared_ptr<ConnectionDetails>& det,
     m_conLis = lis;
     m_filePath = file;
     m_logIdent = "[Client]";
+    m_socket = nullptr;
 }
 
 Outcome::~Outcome()

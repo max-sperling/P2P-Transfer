@@ -9,7 +9,7 @@
 class IView
 {
 public:
-    virtual ~IView() {}
+    virtual ~IView() = default;
 
     virtual bool start() = 0;
 
@@ -32,7 +32,7 @@ public:
 class IViewListener
 {
 public:
-    virtual ~IViewListener() {}
+    virtual ~IViewListener() = default;
 
     /**
      * @param[in] file ... File path

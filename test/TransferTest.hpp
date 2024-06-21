@@ -6,8 +6,5 @@
 class TransferTest
 {
 public:
-    TransferTest();
-    ~TransferTest();
-
     bool exec(int argc, char *argv[]);
 };

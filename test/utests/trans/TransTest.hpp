@@ -9,5 +9,5 @@ class TransTest : public testing::Test
 {
 protected:
     TransTest();
-    ~TransTest();
+    ~TransTest() override;
 };

@@ -4,7 +4,6 @@
 /************************/
 
 #include "view/IView.hpp"
-#include <QWidget>
 #include <QGridLayout>
 #include <QListWidget>
 #include <QPushButton>
@@ -16,7 +15,7 @@ class ViewQt : public QObject, public IView
 
 public:
     ViewQt();
-    ~ViewQt();
+    ~ViewQt() override;
 
     // --- IView -----------------------------------
     bool start() override;

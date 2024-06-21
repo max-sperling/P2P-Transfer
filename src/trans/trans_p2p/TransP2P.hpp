@@ -8,20 +8,17 @@
 #include <memory>
 #include <vector>
 
-class Server;
-class Client;
+#include "trans/trans_p2p/Server.hpp"
+#include "trans/trans_p2p/Client.hpp"
 
 class TransP2P : public ITrans
 {
 public:
-    TransP2P();
-    ~TransP2P();
-
     // --- ITrans ----------------------------
-    virtual bool init(const IViewSPtr& view, const IConfSPtr& conf) override;
-    virtual bool exec() override;
-    virtual bool attach(IConnectionListener* lis) override;
-    virtual bool detach(IConnectionListener* lis) override;
+    bool init(const IViewSPtr& view, const IConfSPtr& conf) override;
+    bool exec() override;
+    bool attach(IConnectionListener* lis) override;
+    bool detach(IConnectionListener* lis) override;
     // ---------------------------------------
 
 private:

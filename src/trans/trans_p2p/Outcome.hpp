@@ -19,7 +19,7 @@ class Outcome : public QThread
 public:
     Outcome(IViewSPtr view, const std::shared_ptr<ConnectionDetails>& det,
             const std::shared_ptr<IConLisVec>& lis, const std::string& file);
-    ~Outcome();
+    ~Outcome() override;
 
 protected:
     void run() override;

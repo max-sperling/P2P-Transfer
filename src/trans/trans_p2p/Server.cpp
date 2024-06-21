@@ -10,15 +10,12 @@
 using namespace std;
 
 // ***** Public ************************************************************************************
-Server::Server(IViewSPtr view, const shared_ptr<ConnectionDetails>& det,
-    const shared_ptr<IConLisVec>& lis)
+Server::Server(IViewSPtr view, const shared_ptr<ConnectionDetails>& det, const shared_ptr<IConLisVec>& lis)
 {
     m_view = view;
     m_conDet = det;
     m_conLis = lis;
 }
-
-Server::~Server() {}
 
 bool Server::init()
 {

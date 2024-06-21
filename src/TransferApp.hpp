@@ -11,7 +11,6 @@ class TransferApp
 {
 public:
     TransferApp(const ViewType viewType, const ConfType confType, const TransType transType);
-    ~TransferApp();
 
     bool exec(int argc, char *argv[]);
 

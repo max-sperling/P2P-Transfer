@@ -18,7 +18,7 @@ class Income : public QThread
 public:
     Income(IViewSPtr view, const std::shared_ptr<ConnectionDetails>& det,
            const std::shared_ptr<IConLisVec>& lis, qintptr socketId);
-    ~Income();
+    ~Income() override;
 
 protected:
     void run() override;

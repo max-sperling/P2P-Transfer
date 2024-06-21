@@ -8,8 +8,7 @@
 using namespace std;
 
 // ***** Public ************************************************************************************
-Client::Client(IViewSPtr view, const shared_ptr<ConnectionDetails>& det,
-               const shared_ptr<IConLisVec>& lis)
+Client::Client(IViewSPtr view, const shared_ptr<ConnectionDetails>& det, const shared_ptr<IConLisVec>& lis)
 {
     m_view = view;
     m_conDet = det;

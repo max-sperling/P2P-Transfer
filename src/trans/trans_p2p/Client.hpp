@@ -20,12 +20,11 @@ public:
      * @param[in] det  ... Connection details
      * @param[in] lis  ... Connection listener
      */
-    Client(IViewSPtr view, const std::shared_ptr<ConnectionDetails>& det,
-           const std::shared_ptr<IConLisVec>& lis);
-    ~Client();
+    Client(IViewSPtr view, const std::shared_ptr<ConnectionDetails>& det, const std::shared_ptr<IConLisVec>& lis);
+    ~Client() override;
 
     // --- IViewListener ---------------------
-    virtual void onSendTriggered(const std::string& file) override;
+    void onSendTriggered(const std::string& file) override;
     // ---------------------------------------
 
 private:

@@ -64,8 +64,7 @@ bool ViewQt::detach(IViewListener* lis)
 
 void ViewQt::onSendClicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(
-        m_widWin, "Send", QDir::homePath());
+    QString fileName = QFileDialog::getOpenFileName(m_widWin, "Send", QDir::homePath());
 
     if (fileName == "") { return; }
 
