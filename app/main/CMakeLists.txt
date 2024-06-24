@@ -1,7 +1,7 @@
 project (Main-app)
 
 # Build
-set (MAIN_SRC Main.cpp ${CMAKE_SOURCE_DIR}/src/TransferApp.cpp)
+set (MAIN_SRC Main.cpp)
 add_executable (${PROJECT_NAME} ${MAIN_SRC})
 target_include_directories (${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${Qt6Widgets_INCLUDE_DIRS})
 target_link_libraries (${PROJECT_NAME} PRIVATE Trans View Conf ${Qt6Widgets_LIBRARIES})

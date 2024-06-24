@@ -1,7 +1,7 @@
 project (Test-app)
 
 # Build
-set (TEST_SRC Test.cpp ${CMAKE_SOURCE_DIR}/test/TransferTest.cpp)
+set (TEST_SRC Test.cpp)
 add_executable (${PROJECT_NAME} ${TEST_SRC})
 target_include_directories (${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/src

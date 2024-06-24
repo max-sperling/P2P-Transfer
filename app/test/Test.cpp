@@ -2,12 +2,10 @@
 /* Author: Max Sperling */
 /************************/
 
-#include "TransferTest.hpp"
+#include <gtest/gtest.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    TransferTest transferTest;
-    transferTest.exec(argc, argv);
-
-    return 0;
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
