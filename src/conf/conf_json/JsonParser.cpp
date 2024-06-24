@@ -20,11 +20,11 @@ namespace conf
             resetParser();
         }
 
-        void JsonParser::parseFile(const string& file)
+        void JsonParser::parseFile(const std::filesystem::path& filePath)
         {
             resetParser();
 
-            m_file.open(file);
+            m_file.open(filePath);
             if (!m_file.is_open()) throw;
 
             char c;

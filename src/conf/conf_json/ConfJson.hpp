@@ -13,7 +13,7 @@ namespace conf
         {
         public:
             // --- IConf -----------------------------
-            bool read(ConnectionDetails& det) override;
+            bool read(const std::filesystem::path& configPath, ConnectionDetails& conDetails) override;
             // ---------------------------------------
         };
     }

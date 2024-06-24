@@ -12,7 +12,7 @@
 ## Build the project
 
 ### 1. Setup
-- cmake -S . -B build
+- cmake -S . -B build -D CMAKE_INSTALL_PREFIX=install
 
 ### 2. Build
 - All: cmake --build build
@@ -20,4 +20,4 @@
 - Test-app: cmake --build build --target Test-app
 
 ### 3. Install
-- Main-app: cmake --install build --prefix "install"
+- Main-app: cmake --install build

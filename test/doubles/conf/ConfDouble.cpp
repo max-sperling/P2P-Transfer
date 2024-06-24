@@ -6,14 +6,9 @@
 
 namespace conf
 {
-    ConfDouble::ConfDouble(const ConnectionDetails& det)
+    bool ConfDouble::read(const std::filesystem::path& configPath, ConnectionDetails& conDetails)
     {
-        m_conDet = det;
-    }
-
-    bool ConfDouble::read(ConnectionDetails& det)
-    {
-        det = m_conDet;
+        m_conDet = conDetails;
 
         return true;
     }

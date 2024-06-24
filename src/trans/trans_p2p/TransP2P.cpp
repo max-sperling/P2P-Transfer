@@ -11,35 +11,25 @@ namespace trans
 {
     namespace trans_p2p
     {
-        bool TransP2P::init(const view::IViewSPtr& view, const conf::IConfSPtr& conf)
+        bool TransP2P::init(const view::IViewSPtr& view)
         {
             m_view = view;
-            m_conf = conf;
 
             return true;
         }
 
-        bool TransP2P::exec()
+        bool TransP2P::exec(const std::shared_ptr<conf::ConnectionDetails>& conDetails)
         {
-            m_view->start();
-
-            m_conDet = make_shared<conf::ConnectionDetails>();
-            if (!m_conf->read(*m_conDet))
-            {
-                m_view->logIt("Error while reading Config");
-                return false;
-            }
-
             m_conLis = make_shared<IConLisVec>();
 
-            m_server = make_unique<Server>(m_view, m_conDet, m_conLis);
+            m_server = make_unique<Server>(m_view, conDetails, m_conLis);
             if (!m_server->init())
             {
                 m_view->logIt("Error while init Server");
                 return false;
             }
 
-            m_client = make_unique<Client>(m_view, m_conDet, m_conLis);
+            m_client = make_unique<Client>(m_view, conDetails, m_conLis);
 
             return true;
         }

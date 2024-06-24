@@ -8,6 +8,5 @@ target_link_libraries (${PROJECT_NAME} PRIVATE Trans View Conf ${Qt6Widgets_LIBR
 
 # Install
 install (TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
-install (FILES ${CMAKE_SOURCE_DIR}/res/conf/config.json DESTINATION .)
-set_target_properties (${PROJECT_NAME} PROPERTIES INSTALL_RPATH ".")
-set_target_properties (${PROJECT_NAME} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+install (FILES ${CMAKE_SOURCE_DIR}/res/conf/config.json DESTINATION conf)
+set_target_properties (${PROJECT_NAME} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" BUILD_WITH_INSTALL_RPATH TRUE)

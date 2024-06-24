@@ -68,14 +68,13 @@ namespace trans
         char** argv = nullptr;
         QCoreApplication app(argc, argv);
 
-        conf::ConnectionDetails conDet("127.0.0.1", 45450, testOutputPath);
+        auto conDet = make_shared<conf::ConnectionDetails>("127.0.0.1", 45450, testOutputPath);
 
         shared_ptr<view::ViewDouble> view = make_shared<view::ViewDouble>();
-        conf::IConfSPtr conf = make_shared<conf::ConfDouble>(conDet);
         ITransSPtr trans = TransFactory::create(TransType::P2P);
 
-        ASSERT_EQ(trans->init(view, conf), true);
-        ASSERT_EQ(trans->exec(), true);
+        ASSERT_EQ(trans->init(view), true);
+        ASSERT_EQ(trans->exec(conDet), true);
 
         QTimer::singleShot(0, [&view, &testInputFilePath]() {
             view->simulateSend(testInputFilePath);

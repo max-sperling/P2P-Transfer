@@ -7,6 +7,8 @@
 #include <map>
 #include <fstream>
 
+#include <filesystem>
+
 namespace conf
 {
     namespace conf_json
@@ -18,9 +20,9 @@ namespace conf
             ~JsonParser();
 
             /**
-             * @param[in] file ... File path
+             * @param[in] filePath ... File path
              */
-            void parseFile(const std::string& file);
+            void parseFile(const std::filesystem::path& filePath);
 
             /**
              * @param[in]  name  ... Name

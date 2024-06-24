@@ -4,6 +4,8 @@
 /************************/
 
 #include "conf/IConfFwd.hpp"
+
+#include <filesystem>
 #include <string>
 
 namespace conf
@@ -14,9 +16,10 @@ namespace conf
         virtual ~IConf() = default;
 
         /**
-         * @param[out] det ... Connection details
+         * @param[in]  configPath ... Path to the config
+         * @param[out] conDetails ... Connection details
          */
-        virtual bool read(ConnectionDetails& det) = 0;
+        virtual bool read(const std::filesystem::path& configPath, ConnectionDetails& conDetails) = 0;
     };
 
     struct ConnectionDetails
@@ -26,8 +29,8 @@ namespace conf
         ConnectionDetails(const std::string& addr, unsigned int port, const std::string& dir)
             : m_addr(addr), m_port(port), m_dir(dir) {}
 
-        std::string m_addr{""};
-        unsigned int m_port{0};
-        std::string m_dir{""};
+        std::string m_addr{"127.0.0.1"};
+        unsigned int m_port{45450};
+        std::string m_dir{"files"};
     };
 }

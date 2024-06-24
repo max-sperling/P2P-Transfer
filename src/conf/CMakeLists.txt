@@ -7,4 +7,4 @@ add_subdirectory (conf_json)
 target_include_directories (${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # Install
-install (TARGETS ${PROJECT_NAME} LIBRARY DESTINATION .)
+install (TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib)

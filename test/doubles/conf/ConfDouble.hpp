@@ -10,13 +10,8 @@ namespace conf
     class ConfDouble : public IConf
     {
     public:
-        /**
-         * @param[in] det ... Connection details
-         */
-        ConfDouble(const ConnectionDetails& det);
-
         // --- IConf -----------------------------
-        bool read(ConnectionDetails& det) override;
+        bool read(const std::filesystem::path& configPath, ConnectionDetails& conDetails) override;
         // ---------------------------------------
 
     private:
