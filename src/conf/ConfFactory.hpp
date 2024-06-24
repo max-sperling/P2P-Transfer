@@ -5,8 +5,11 @@
 
 #include "conf/IConfFwd.hpp"
 
-class ConfFactory
+namespace conf
 {
-public:
-    static IConfSPtr create(const ConfType type);
-};
+    class ConfFactory
+    {
+    public:
+        static IConfSPtr create(const ConfType type);
+    };
+}

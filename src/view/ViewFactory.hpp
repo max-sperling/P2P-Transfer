@@ -5,8 +5,11 @@
 
 #include "view/IViewFwd.hpp"
 
-class ViewFactory
+namespace view
 {
-public:
-    static IViewSPtr create(const ViewType type);
-};
+    class ViewFactory
+    {
+    public:
+        static IViewSPtr create(const ViewType type);
+    };
+}

@@ -5,10 +5,16 @@
 
 #include "conf/IConf.hpp"
 
-class ConfJson : public IConf
+namespace conf
 {
-public:
-    // --- IConf -----------------------------
-    bool read(ConnectionDetails& det) override;
-    // ---------------------------------------
-};
+    namespace conf_json
+    {
+        class ConfJson : public IConf
+        {
+        public:
+            // --- IConf -----------------------------
+            bool read(ConnectionDetails& det) override;
+            // ---------------------------------------
+        };
+    }
+}

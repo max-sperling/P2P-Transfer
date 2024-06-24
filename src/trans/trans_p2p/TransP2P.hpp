@@ -11,23 +11,29 @@
 #include "trans/trans_p2p/Server.hpp"
 #include "trans/trans_p2p/Client.hpp"
 
-class TransP2P : public ITrans
+namespace trans
 {
-public:
-    // --- ITrans ----------------------------
-    bool init(const IViewSPtr& view, const IConfSPtr& conf) override;
-    bool exec() override;
-    bool attach(IConnectionListener* lis) override;
-    bool detach(IConnectionListener* lis) override;
-    // ---------------------------------------
+    namespace trans_p2p
+    {
+        class TransP2P : public ITrans
+        {
+        public:
+            // --- ITrans ----------------------------
+            bool init(const view::IViewSPtr& view, const conf::IConfSPtr& conf) override;
+            bool exec() override;
+            bool attach(IConnectionListener* lis) override;
+            bool detach(IConnectionListener* lis) override;
+            // ---------------------------------------
 
-private:
-    IViewSPtr m_view;
-    IConfSPtr m_conf;
+        private:
+            view::IViewSPtr m_view;
+            conf::IConfSPtr m_conf;
 
-    std::shared_ptr<ConnectionDetails> m_conDet;
-    std::shared_ptr<IConLisVec> m_conLis;
+            std::shared_ptr<conf::ConnectionDetails> m_conDet;
+            std::shared_ptr<IConLisVec> m_conLis;
 
-    std::unique_ptr<Server> m_server;
-    std::unique_ptr<Client> m_client;
-};
+            std::unique_ptr<Server> m_server;
+            std::unique_ptr<Client> m_client;
+        };
+    }
+}

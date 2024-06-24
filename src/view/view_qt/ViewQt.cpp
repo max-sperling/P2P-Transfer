@@ -9,67 +9,73 @@
 
 using namespace std;
 
-ViewQt::ViewQt()
+namespace view
 {
-    m_widWin = new QWidget();
-    m_lytWin = new QGridLayout();
-    m_lstLog = new QListWidget();
-    m_btnSend = new QPushButton("Send");
-}
-
-ViewQt::~ViewQt()
-{
-    delete m_btnSend;
-    delete m_lstLog;
-    delete m_lytWin;
-    delete m_widWin;
-}
-
-bool ViewQt::start()
-{
-    connect(m_btnSend, SIGNAL(pressed()), this, SLOT(onSendClicked()));
-
-    m_lytWin->addWidget(m_lstLog);
-    m_lytWin->addWidget(m_btnSend);
-
-    m_widWin->setLayout(m_lytWin);
-    m_widWin->show();
-
-    return true;
-}
-
-void ViewQt::logIt(const string& msg)
-{
-    std::cout << msg << std::endl;
-    m_lstLog->addItem(QString::fromStdString(msg));
-}
-
-bool ViewQt::attach(IViewListener* lis)
-{
-    auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
-    if (iter != m_viewLis.end()) { return false; }
-    m_viewLis.push_back(lis);
-
-    return true;
-}
-
-bool ViewQt::detach(IViewListener* lis)
-{
-    auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
-    if (iter == m_viewLis.end()) { return false; }
-    m_viewLis.erase(iter);
-
-    return true;
-}
-
-void ViewQt::onSendClicked()
-{
-    QString fileName = QFileDialog::getOpenFileName(m_widWin, "Send", QDir::homePath());
-
-    if (fileName == "") { return; }
-
-    for (IViewListener* lis : m_viewLis)
+    namespace view_qt
     {
-        lis->onSendTriggered(fileName.toStdString());
+        ViewQt::ViewQt()
+        {
+            m_widWin = new QWidget();
+            m_lytWin = new QGridLayout();
+            m_lstLog = new QListWidget();
+            m_btnSend = new QPushButton("Send");
+        }
+
+        ViewQt::~ViewQt()
+        {
+            delete m_btnSend;
+            delete m_lstLog;
+            delete m_lytWin;
+            delete m_widWin;
+        }
+
+        bool ViewQt::start()
+        {
+            connect(m_btnSend, SIGNAL(pressed()), this, SLOT(onSendClicked()));
+
+            m_lytWin->addWidget(m_lstLog);
+            m_lytWin->addWidget(m_btnSend);
+
+            m_widWin->setLayout(m_lytWin);
+            m_widWin->show();
+
+            return true;
+        }
+
+        void ViewQt::logIt(const string& msg)
+        {
+            std::cout << msg << std::endl;
+            m_lstLog->addItem(QString::fromStdString(msg));
+        }
+
+        bool ViewQt::attach(IViewListener* lis)
+        {
+            auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
+            if (iter != m_viewLis.end()) { return false; }
+            m_viewLis.push_back(lis);
+
+            return true;
+        }
+
+        bool ViewQt::detach(IViewListener* lis)
+        {
+            auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
+            if (iter == m_viewLis.end()) { return false; }
+            m_viewLis.erase(iter);
+
+            return true;
+        }
+
+        void ViewQt::onSendClicked()
+        {
+            QString fileName = QFileDialog::getOpenFileName(m_widWin, "Send", QDir::homePath());
+
+            if (fileName == "") { return; }
+
+            for (IViewListener* lis : m_viewLis)
+            {
+                lis->onSendTriggered(fileName.toStdString());
+            }
+        }
     }
 }

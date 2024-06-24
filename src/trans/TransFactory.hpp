@@ -5,8 +5,11 @@
 
 #include "trans/ITransFwd.hpp"
 
-class TransFactory
+namespace trans
 {
-public:
-    static ITransSPtr create(const TransType type);
-};
+    class TransFactory
+    {
+    public:
+        static ITransSPtr create(const TransType type);
+    };
+}

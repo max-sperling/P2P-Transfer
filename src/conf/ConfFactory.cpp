@@ -7,16 +7,19 @@
 
 using namespace std;
 
-IConfSPtr ConfFactory::create(const ConfType type)
+namespace conf
 {
-    IConfSPtr confPtr;
-
-    switch (type)
+    IConfSPtr ConfFactory::create(const ConfType type)
     {
-    case ConfType::Json:
-        confPtr = make_shared<ConfJson>();
-        break;
-    }
+        IConfSPtr confPtr;
 
-    return confPtr;
+        switch (type)
+        {
+            case ConfType::Json:
+                confPtr = make_shared<conf_json::ConfJson>();
+            break;
+        }
+
+        return confPtr;
+    }
 }

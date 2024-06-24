@@ -5,9 +5,12 @@
 
 #include <memory>
 
-enum ConfType { Json };
+namespace conf
+{
+    enum ConfType { Json };
 
-class IConf;
-struct ConnectionDetails;
+    class IConf;
+    struct ConnectionDetails;
 
-typedef std::shared_ptr<IConf> IConfSPtr;
+    typedef std::shared_ptr<IConf> IConfSPtr;
+}

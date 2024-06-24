@@ -7,16 +7,19 @@
 
 using namespace std;
 
-ITransSPtr TransFactory::create(const TransType type)
+namespace trans
 {
-    ITransSPtr transPtr;
-
-    switch (type)
+    ITransSPtr TransFactory::create(const TransType type)
     {
-    case TransType::P2P:
-        transPtr = make_shared<TransP2P>();
-        break;
-    }
+        ITransSPtr transPtr;
 
-    return transPtr;
+        switch (type)
+        {
+            case TransType::P2P:
+                transPtr = make_shared<trans_p2p::TransP2P>();
+            break;
+        }
+
+        return transPtr;
+    }
 }

@@ -8,16 +8,19 @@
 
 using namespace std;
 
-IViewSPtr ViewFactory::create(const ViewType type)
+namespace view
 {
-    IViewSPtr viewPtr;
-
-    switch (type)
+    IViewSPtr ViewFactory::create(const ViewType type)
     {
-    case ViewType::Qute:
-        viewPtr = make_shared<ViewQt>();
-        break;
-    }
+        IViewSPtr viewPtr;
 
-    return viewPtr;
+        switch (type)
+        {
+            case ViewType::Qute:
+                viewPtr = make_shared<view_qt::ViewQt>();
+            break;
+        }
+
+        return viewPtr;
+    }
 }

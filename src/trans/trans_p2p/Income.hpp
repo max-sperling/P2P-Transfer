@@ -11,31 +11,37 @@
 #include <memory>
 #include <string>
 
-class Income : public QThread
+namespace trans
 {
-    Q_OBJECT
+    namespace trans_p2p
+    {
+        class Income : public QThread
+        {
+            Q_OBJECT
 
-public:
-    Income(IViewSPtr view, const std::shared_ptr<ConnectionDetails>& det,
-           const std::shared_ptr<IConLisVec>& lis, qintptr socketId);
-    ~Income() override;
+        public:
+            Income(view::IViewSPtr view, const std::shared_ptr<conf::ConnectionDetails>& det,
+                   const std::shared_ptr<IConLisVec>& lis, qintptr socketId);
+            ~Income() override;
 
-protected:
-    void run() override;
+        protected:
+            void run() override;
 
-private:
-    IViewSPtr m_view;
+        private:
+            view::IViewSPtr m_view;
 
-    std::shared_ptr<ConnectionDetails> m_conDet;
-    std::shared_ptr<IConLisVec> m_conLis;
+            std::shared_ptr<conf::ConnectionDetails> m_conDet;
+            std::shared_ptr<IConLisVec> m_conLis;
 
-    qintptr m_socketId;
-    std::string m_fileName;
-    std::string m_logIdent;
+            qintptr m_socketId;
+            std::string m_fileName;
+            std::string m_logIdent;
 
-    QTcpSocket* m_socket;
+            QTcpSocket* m_socket;
 
-private slots:
-    void onReceivedData();
-    void onDisconnected();
-};
+            private slots:
+                void onReceivedData();
+            void onDisconnected();
+        };
+    }
+}

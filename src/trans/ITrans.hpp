@@ -7,46 +7,49 @@
 #include "conf/IConfFwd.hpp"
 #include "view/IViewFwd.hpp"
 
-class ITrans
+namespace trans
 {
-public:
-    virtual ~ITrans() = default;
+    class ITrans
+    {
+    public:
+        virtual ~ITrans() = default;
 
-    /**
-     * @param[in] viewPtr ... View
-     * @param[in] confPtr ... Conf
-     */
-    virtual bool init(const IViewSPtr& view, const IConfSPtr& conf) = 0;
+        /**
+         * @param[in] viewPtr ... View
+         * @param[in] confPtr ... Conf
+         */
+        virtual bool init(const view::IViewSPtr& view, const conf::IConfSPtr& conf) = 0;
 
-    virtual bool exec() = 0;
+        virtual bool exec() = 0;
 
-    /**
-     * @param[in] lis ... Connection listener
-     */
-    virtual bool attach(IConnectionListener *lis) = 0;
+        /**
+         * @param[in] lis ... Connection listener
+         */
+        virtual bool attach(IConnectionListener *lis) = 0;
 
-    /**
-     * @param[in] lis ... Connection listener
-     */
-    virtual bool detach(IConnectionListener *lis) = 0;
-};
+        /**
+         * @param[in] lis ... Connection listener
+         */
+        virtual bool detach(IConnectionListener *lis) = 0;
+    };
 
-class IConnectionListener
-{
-public:
-    virtual ~IConnectionListener() = default;
+    class IConnectionListener
+    {
+    public:
+        virtual ~IConnectionListener() = default;
 
-    enum ConnectionType { OUTGOING, INCOMING };
+        enum ConnectionType { OUTGOING, INCOMING };
 
-    /**
-     * @param[in] file ... File name
-     * @param[in] type ... Connection type
-     */
-    virtual void onConnectionStarted(const std::string& file, const ConnectionType type) = 0;
+        /**
+         * @param[in] file ... File name
+         * @param[in] type ... Connection type
+         */
+        virtual void onConnectionStarted(const std::string& file, const ConnectionType type) = 0;
 
-    /**
-     * @param[in] file ... File name
-     * @param[in] type ... Connection type
-     */
-    virtual void onConnectionFinished(const std::string& file, const ConnectionType type) = 0;
-};
+        /**
+         * @param[in] file ... File name
+         * @param[in] type ... Connection type
+         */
+        virtual void onConnectionFinished(const std::string& file, const ConnectionType type) = 0;
+    };
+}

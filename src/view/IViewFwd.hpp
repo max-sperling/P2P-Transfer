@@ -5,9 +5,12 @@
 
 #include <memory>
 
-enum ViewType { Qute };
+namespace view
+{
+    enum ViewType { Qute };
 
-class IView;
-class IViewListener;
+    class IView;
+    class IViewListener;
 
-typedef std::shared_ptr<IView> IViewSPtr;
+    typedef std::shared_ptr<IView> IViewSPtr;
+}

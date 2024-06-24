@@ -10,12 +10,12 @@
 class TransferApp
 {
 public:
-    TransferApp(const ViewType viewType, const ConfType confType, const TransType transType);
+    TransferApp(const view::ViewType viewType, const conf::ConfType confType, const trans::TransType transType);
 
     bool exec(int argc, char *argv[]);
 
 private:
-    const ViewType m_viewType;
-    const ConfType m_confType;
-    const TransType m_transType;
+    const view::ViewType m_viewType;
+    const conf::ConfType m_confType;
+    const trans::TransType m_transType;
 };

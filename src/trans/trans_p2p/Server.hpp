@@ -10,27 +10,33 @@
 #include <memory>
 #include <string>
 
-class Server : public QTcpServer
+namespace trans
 {
-    Q_OBJECT
+    namespace trans_p2p
+    {
+        class Server : public QTcpServer
+        {
+            Q_OBJECT
 
-public:
-    /**
-     * @param[in] view ... View
-     * @param[in] det  ... Connection details
-     * @param[in] lis  ... Connection listener
-     */
-    Server(IViewSPtr view, const std::shared_ptr<ConnectionDetails>& det, const std::shared_ptr<IConLisVec>& lis);
-    ~Server() override = default;
+        public:
+            /**
+             * @param[in] view ... View
+             * @param[in] det  ... Connection details
+             * @param[in] lis  ... Connection listener
+             */
+            Server(view::IViewSPtr view, const std::shared_ptr<conf::ConnectionDetails>& det, const std::shared_ptr<IConLisVec>& lis);
+            ~Server() override = default;
 
-    bool init();
+            bool init();
 
-protected:
-    void incomingConnection(qintptr socketId) override;
+        protected:
+            void incomingConnection(qintptr socketId) override;
 
-private:
-    IViewSPtr m_view;
+        private:
+            view::IViewSPtr m_view;
 
-    std::shared_ptr<ConnectionDetails> m_conDet;
-    std::shared_ptr<IConLisVec> m_conLis;
-};
+            std::shared_ptr<conf::ConnectionDetails> m_conDet;
+            std::shared_ptr<IConLisVec> m_conLis;
+        };
+    }
+}

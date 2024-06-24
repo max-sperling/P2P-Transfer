@@ -22,7 +22,7 @@ namespace
     const std::filesystem::path testInputPath = testPath / "input";
     const std::filesystem::path testOutputPath = testPath / "output";
 
-    class ConLis : public IConnectionListener
+    class ConLis : public trans::IConnectionListener
     {
     public:
         ConLis(QCoreApplication* app) : m_app(app) {}
@@ -41,55 +41,58 @@ namespace
     };
 }
 
-TransTest::TransTest()
+namespace trans
 {
-    filesystem::create_directories(testInputPath);
-}
+    TransTest::TransTest()
+    {
+        filesystem::create_directories(testInputPath);
+    }
 
-TransTest::~TransTest()
-{
-    filesystem::remove_all(testPath);
-}
+    TransTest::~TransTest()
+    {
+        filesystem::remove_all(testPath);
+    }
 
-TEST_F(TransTest, testTransfer)
-{
-    const std::string fileName = "test_file_1.txt";
-    const std::filesystem::path testInputFilePath = testInputPath / fileName;
-    const std::filesystem::path testOutputFilePath = testOutputPath / fileName;
-    const std::string content = "abcdef";
+    TEST_F(TransTest, testTransfer)
+    {
+        const std::string fileName = "test_file_1.txt";
+        const std::filesystem::path testInputFilePath = testInputPath / fileName;
+        const std::filesystem::path testOutputFilePath = testOutputPath / fileName;
+        const std::string content = "abcdef";
 
-    ofstream ofs(testInputFilePath);
-    ofs << content;
-    ofs.close();
+        ofstream ofs(testInputFilePath);
+        ofs << content;
+        ofs.close();
 
-    int argc = 0;
-    char** argv = nullptr;
-    QCoreApplication app(argc, argv);
+        int argc = 0;
+        char** argv = nullptr;
+        QCoreApplication app(argc, argv);
 
-    ConnectionDetails conDet("127.0.0.1", 45450, testOutputPath);
+        conf::ConnectionDetails conDet("127.0.0.1", 45450, testOutputPath);
 
-    shared_ptr<ViewDouble> view = make_shared<ViewDouble>();
-    IConfSPtr conf = make_shared<ConfDouble>(conDet);
-    ITransSPtr trans = TransFactory::create(TransType::P2P);
+        shared_ptr<view::ViewDouble> view = make_shared<view::ViewDouble>();
+        conf::IConfSPtr conf = make_shared<conf::ConfDouble>(conDet);
+        ITransSPtr trans = TransFactory::create(TransType::P2P);
 
-    ASSERT_EQ(trans->init(view, conf), true);
-    ASSERT_EQ(trans->exec(), true);
+        ASSERT_EQ(trans->init(view, conf), true);
+        ASSERT_EQ(trans->exec(), true);
 
-    QTimer::singleShot(0, [&view, &testInputFilePath]() {
-        view->simulateSend(testInputFilePath);
-    });
+        QTimer::singleShot(0, [&view, &testInputFilePath]() {
+            view->simulateSend(testInputFilePath);
+        });
 
-    ConLis conLis(&app);
-    trans->attach(&conLis);
-    app.exec();
-    trans->detach(&conLis);
+        ConLis conLis(&app);
+        trans->attach(&conLis);
+        app.exec();
+        trans->detach(&conLis);
 
-    ASSERT_EQ(filesystem::exists(testOutputFilePath), true);
+        ASSERT_EQ(filesystem::exists(testOutputFilePath), true);
 
-    ifstream ifs(testOutputFilePath);
-    stringstream buffer;
-    buffer << ifs.rdbuf();
-    ifs.close();
+        ifstream ifs(testOutputFilePath);
+        stringstream buffer;
+        buffer << ifs.rdbuf();
+        ifs.close();
 
-    EXPECT_EQ(buffer.str(), content);
+        EXPECT_EQ(buffer.str(), content);
+    }
 }

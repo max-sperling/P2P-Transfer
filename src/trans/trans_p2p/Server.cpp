@@ -9,27 +9,33 @@
 
 using namespace std;
 
-// ***** Public ************************************************************************************
-Server::Server(IViewSPtr view, const shared_ptr<ConnectionDetails>& det, const shared_ptr<IConLisVec>& lis)
+namespace trans
 {
-    m_view = view;
-    m_conDet = det;
-    m_conLis = lis;
-}
+    namespace trans_p2p
+    {
+        // ***** Public ************************************************************************************
+        Server::Server(view::IViewSPtr view, const shared_ptr<conf::ConnectionDetails>& det, const shared_ptr<IConLisVec>& lis)
+        {
+            m_view = view;
+            m_conDet = det;
+            m_conLis = lis;
+        }
 
-bool Server::init()
-{
-    if (!listen(QHostAddress::Any, m_conDet->m_port)) { return false; }
+        bool Server::init()
+        {
+            if (!listen(QHostAddress::Any, m_conDet->m_port)) { return false; }
 
-    return true;
-}
-// *************************************************************************************************
+            return true;
+        }
+        // *************************************************************************************************
 
-// ***** Protected *********************************************************************************
-void Server::incomingConnection(qintptr socketId)
-{
-    Income *income = new Income(m_view, m_conDet, m_conLis, socketId);
-    connect(income, SIGNAL(finished()), income, SLOT(deleteLater()));
-    income->start();
+        // ***** Protected *********************************************************************************
+        void Server::incomingConnection(qintptr socketId)
+        {
+            Income *income = new Income(m_view, m_conDet, m_conLis, socketId);
+            connect(income, SIGNAL(finished()), income, SLOT(deleteLater()));
+            income->start();
+        }
+        // *************************************************************************************************
+    }
 }
-// *************************************************************************************************

@@ -4,14 +4,17 @@
 
 #include "ConfDouble.hpp"
 
-ConfDouble::ConfDouble(const ConnectionDetails& det)
+namespace conf
 {
-    m_conDet = det;
-}
+    ConfDouble::ConfDouble(const ConnectionDetails& det)
+    {
+        m_conDet = det;
+    }
 
-bool ConfDouble::read(ConnectionDetails& det)
-{
-    det = m_conDet;
+    bool ConfDouble::read(ConnectionDetails& det)
+    {
+        det = m_conDet;
 
-    return true;
+        return true;
+    }
 }

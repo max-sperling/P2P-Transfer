@@ -12,32 +12,38 @@
 #include <memory>
 #include <string>
 
-class Outcome : public QThread
+namespace trans
 {
-    Q_OBJECT
+    namespace trans_p2p
+    {
+        class Outcome : public QThread
+        {
+            Q_OBJECT
 
-public:
-    Outcome(IViewSPtr view, const std::shared_ptr<ConnectionDetails>& det,
-            const std::shared_ptr<IConLisVec>& lis, const std::string& file);
-    ~Outcome() override;
+        public:
+            Outcome(view::IViewSPtr view, const std::shared_ptr<conf::ConnectionDetails>& det,
+                    const std::shared_ptr<IConLisVec>& lis, const std::string& file);
+            ~Outcome() override;
 
-protected:
-    void run() override;
+        protected:
+            void run() override;
 
-private:
-    bool connectToServer();
-    bool sendFile();
+        private:
+            bool connectToServer();
+            bool sendFile();
 
-    IViewSPtr m_view;
+            view::IViewSPtr m_view;
 
-    std::shared_ptr<ConnectionDetails> m_conDet;
-    std::shared_ptr<IConLisVec> m_conLis;
+            std::shared_ptr<conf::ConnectionDetails> m_conDet;
+            std::shared_ptr<IConLisVec> m_conLis;
 
-    std::string m_filePath;
-    std::string m_logIdent;
+            std::string m_filePath;
+            std::string m_logIdent;
 
-    QTcpSocket* m_socket;
+            QTcpSocket* m_socket;
 
-private slots:
-    void onDisconnected();
-};
+            private slots:
+                void onDisconnected();
+        };
+    }
+}

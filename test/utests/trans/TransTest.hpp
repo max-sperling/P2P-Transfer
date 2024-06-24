@@ -5,9 +5,12 @@
 
 #include <gtest/gtest.h>
 
-class TransTest : public testing::Test
+namespace trans
 {
-protected:
-    TransTest();
-    ~TransTest() override;
-};
+    class TransTest : public testing::Test
+    {
+    protected:
+        TransTest();
+        ~TransTest() override;
+    };
+}

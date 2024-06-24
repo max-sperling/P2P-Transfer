@@ -9,7 +9,7 @@
 
 int main(int argc, char *argv[])
 {
-    TransferApp transApp(ViewType::Qute, ConfType::Json, TransType::P2P);
+    TransferApp transApp(view::ViewType::Qute, conf::ConfType::Json, trans::TransType::P2P);
     transApp.exec(argc, argv);
 
     return 0;

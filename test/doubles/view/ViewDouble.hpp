@@ -7,9 +7,11 @@
 #include <string>
 #include <vector>
 
-class ViewDouble : public IView
+namespace view
 {
-public:
+  class ViewDouble : public IView
+  {
+  public:
     // --- IView -----------------------------
     bool start() override;
     void logIt(const std::string& msg) override;
@@ -22,6 +24,7 @@ public:
      */
     void simulateSend(const std::string& file);
 
-private:
+  private:
     std::vector<IViewListener*> m_viewLis;
-};
+  };
+}
