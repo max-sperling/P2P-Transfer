@@ -13,7 +13,7 @@ namespace view
     public:
         virtual ~IView() = default;
 
-        virtual bool start() = 0;
+        virtual bool exec() = 0;
 
         /**
          * @param[in] msg ... Log message

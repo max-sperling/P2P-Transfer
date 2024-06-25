@@ -29,7 +29,7 @@ namespace view
             delete m_widWin;
         }
 
-        bool ViewQt::start()
+        bool ViewQt::exec()
         {
             connect(m_btnSend, SIGNAL(pressed()), this, SLOT(onSendClicked()));
 

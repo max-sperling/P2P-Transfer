@@ -26,16 +26,15 @@ int main(int argc, char *argv[])
     trans::ITransSPtr trans = trans::TransFactory::create(trans::TransType::P2P);
     view::IViewSPtr view = view::ViewFactory::create(view::ViewType::Qute);
 
-    view->start();
+    view->exec();
 
-    auto conDetails = make_shared<conf::ConnectionDetails>();
-    if (!conf->read(confPath, *conDetails))
+    auto conDet = make_shared<conf::ConnectionDetails>();
+    if (!conf->read(confPath, *conDet))
     {
         view->logIt("Error while reading Config");
     }
 
-    if (!trans->init(view)) return 2;
-    if (!trans->exec(conDetails)) return 3;
+    if (!trans->exec(view, conDet)) return 1;
 
     app.exec();
 

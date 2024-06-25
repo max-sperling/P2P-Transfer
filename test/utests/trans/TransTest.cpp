@@ -73,12 +73,9 @@ namespace trans
         shared_ptr<view::ViewDouble> view = make_shared<view::ViewDouble>();
         ITransSPtr trans = TransFactory::create(TransType::P2P);
 
-        ASSERT_EQ(trans->init(view), true);
-        ASSERT_EQ(trans->exec(conDet), true);
+        ASSERT_EQ(trans->exec(view, conDet), true);
 
-        QTimer::singleShot(0, [&view, &testInputFilePath]() {
-            view->simulateSend(testInputFilePath);
-        });
+        QTimer::singleShot(0, [&view, &testInputFilePath]() { view->simulateSend(testInputFilePath); });
 
         ConLis conLis(&app);
         trans->attach(&conLis);

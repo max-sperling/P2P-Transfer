@@ -16,13 +16,9 @@ namespace trans
 
         /**
          * @param[in] viewPtr ... View
+         * @param[in] conDet  ... Connection details
          */
-        virtual bool init(const view::IViewSPtr& view) = 0;
-
-        /**
-         * @param[in] conDetails ... Connection details
-         */
-        virtual bool exec(const std::shared_ptr<conf::ConnectionDetails>& conDetails) = 0;
+        virtual bool exec(const view::IViewSPtr& view, const std::shared_ptr<conf::ConnectionDetails>& conDet) = 0;
 
         /**
          * @param[in] lis ... Connection listener

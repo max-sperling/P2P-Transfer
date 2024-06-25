@@ -13,7 +13,7 @@ namespace view
   {
   public:
     // --- IView -----------------------------
-    bool start() override;
+    bool exec() override;
     void logIt(const std::string& msg) override;
     bool attach(IViewListener* lis) override;
     bool detach(IViewListener* lis) override;

@@ -9,7 +9,7 @@ using namespace std;
 
 namespace view
 {
-    bool ViewDouble::start()
+    bool ViewDouble::exec()
     {
         return true;
     }

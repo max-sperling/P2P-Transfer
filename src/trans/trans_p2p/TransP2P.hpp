@@ -19,15 +19,12 @@ namespace trans
         {
         public:
             // --- ITrans ----------------------------
-            bool init(const view::IViewSPtr& view) override;
-            bool exec(const std::shared_ptr<conf::ConnectionDetails>& conDetails) override;
+            bool exec(const view::IViewSPtr& view, const std::shared_ptr<conf::ConnectionDetails>& conDet) override;
             bool attach(IConnectionListener* lis) override;
             bool detach(IConnectionListener* lis) override;
             // ---------------------------------------
 
         private:
-            view::IViewSPtr m_view;
-
             std::shared_ptr<IConLisVec> m_conLis;
 
             std::unique_ptr<Server> m_server;
