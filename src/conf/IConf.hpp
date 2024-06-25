@@ -24,13 +24,13 @@ namespace conf
 
     struct ConnectionDetails
     {
-        ConnectionDetails() = default;
+        ConnectionDetails() : m_addr("127.0.0.1"), m_port(45450), m_dir("files") {}
 
         ConnectionDetails(const std::string& addr, unsigned int port, const std::string& dir)
             : m_addr(addr), m_port(port), m_dir(dir) {}
 
-        std::string m_addr{"127.0.0.1"};
-        unsigned int m_port{45450};
-        std::string m_dir{"files"};
+        std::string m_addr;
+        unsigned int m_port;
+        std::string m_dir;
     };
 }

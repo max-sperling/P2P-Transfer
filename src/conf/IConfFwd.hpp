@@ -13,4 +13,5 @@ namespace conf
     struct ConnectionDetails;
 
     typedef std::shared_ptr<IConf> IConfSPtr;
+    typedef std::shared_ptr<ConnectionDetails> IConDetSPtr;
 }

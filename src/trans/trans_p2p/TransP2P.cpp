@@ -11,7 +11,7 @@ namespace trans
 {
     namespace trans_p2p
     {
-        bool TransP2P::exec(const view::IViewSPtr& view, const std::shared_ptr<conf::ConnectionDetails>& conDet)
+        bool TransP2P::exec(const view::IViewSPtr& view, const conf::IConDetSPtr& conDet)
         {
             m_conLis = make_shared<IConLisVec>();
 

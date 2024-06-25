@@ -19,7 +19,7 @@ namespace trans
         {
         public:
             // --- ITrans ----------------------------
-            bool exec(const view::IViewSPtr& view, const std::shared_ptr<conf::ConnectionDetails>& conDet) override;
+            bool exec(const view::IViewSPtr& view, const conf::IConDetSPtr& conDet) override;
             bool attach(IConnectionListener* lis) override;
             bool detach(IConnectionListener* lis) override;
             // ---------------------------------------
