@@ -79,26 +79,28 @@ namespace conf
                     {
                         case States::start:
                             m_state = States::name;
-                        break;
+                            break;
                         case States::equals:
                             m_state = States::text;
-                        break;
+                            break;
                         case States::name:
                             m_state = States::equals;
-                        break;
+                            break;
                         case States::text:
-                        {
-                            Data data;
-                            data.type = Data::Types::text;
-                            data.value = m_value;
-                            m_data.insert(pair<string, Data>(m_ident, data));
-                        }
-                        m_state = States::start;
-                        m_ident = "";
-                        m_value = "";
-                        break;
+                            {
+                                Data data;
+                                data.type = Data::Types::text;
+                                data.value = m_value;
+                                m_data.insert(pair<string, Data>(m_ident, data));
+                            }
+                            m_state = States::start;
+                            m_ident = "";
+                            m_value = "";
+                            break;
+                        default:
+                            break;
                     }
-                break;
+                    break;
                 case '0':
                 case '1':
                 case '2':
@@ -113,42 +115,49 @@ namespace conf
                     {
                         case States::name:
                             m_ident += input;
-                        break;
-                        case  States::equals:
+                            break;
+                        case States::equals:
                             m_state = States::number;
                         case States::text:
                         case States::number:
                             m_value += input;
-                        break;
+                            break;
+                        default:
+                            break;
                     }
-                break;
+                    break;
                 case '}':
                 case ',':
                     switch (m_state)
                     {
                         case States::number:
-                        {
-                            Data data;
-                            data.type = Data::Types::number;
-                            data.value = m_value;
-                            m_data.insert(pair<string, Data>(m_ident, data));
-                        }
-                        m_state = States::start;
-                        m_ident = "";
-                        m_value = "";
+                            {
+                                Data data;
+                                data.type = Data::Types::number;
+                                data.value = m_value;
+                                m_data.insert(pair<string, Data>(m_ident, data));
+                            }
+                            m_state = States::start;
+                            m_ident = "";
+                            m_value = "";
+                            break;
+                        default:
+                            break;
                     }
-                break;
+                    break;
                 default:
                     switch (m_state)
                     {
                         case States::name:
                             m_ident += input;
-                        break;
+                            break;
                         case States::text:
                             m_value += input;
-                        break;
+                            break;
+                        default:
+                            break;
                     }
-                break;
+                    break;
             }
         }
     }
