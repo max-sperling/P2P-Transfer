@@ -3,7 +3,7 @@
 /************************/
 
 #include "trans/trans_p2p/Client.hpp"
-#include "trans/trans_p2p/Outcome.hpp"
+#include "trans/trans_p2p/Output.hpp"
 
 using namespace std;
 
@@ -26,11 +26,11 @@ namespace trans
             m_view->detach(this);
         }
 
-        void Client::onSendTriggered(const string& file)
+        void Client::onSendTriggered(const vector<string>& items)
         {
-            Outcome* outcome = new Outcome(m_view, m_conDet, m_conLis, file);
-            connect(outcome, SIGNAL(finished()), outcome, SLOT(deleteLater()));
-            outcome->start();
+            Output* output = new Output(m_view, m_conDet, m_conLis, items);
+            connect(output, SIGNAL(finished()), output, SLOT(deleteLater()));
+            output->start();
         }
         // *************************************************************************************************
     }

@@ -2,15 +2,19 @@
 /* Author: Max Sperling */
 /************************/
 
-#include "trans/trans_p2p/Income.hpp"
+#include "trans/trans_p2p/Input.hpp"
+#include "trans/trans_p2p/TransP2P.hpp"
 #include "trans/ITrans.hpp"
 #include "conf/IConf.hpp"
 #include <QDir>
 #include <QFile>
 
+#include "TransP2P.hpp"
+
 using namespace std;
 
-namespace {
+namespace
+{
     bool openFile(QFile& file, QIODevice::OpenModeFlag mode, const view::IViewSPtr view, std::string logIdent)
     {
         bool isOpen = file.open(QIODevice::WriteOnly | QIODevice::Append);
@@ -30,33 +34,34 @@ namespace trans
     namespace trans_p2p
     {
         // ***** Public ************************************************************************************
-        Income::Income(view::IViewSPtr view, const shared_ptr<conf::ConnectionDetails>& det,
-                       const shared_ptr<IConLisVec>& lis, qintptr socketId)
+        Input::Input(view::IViewSPtr view, const shared_ptr<conf::ConnectionDetails>& det,
+                     const shared_ptr<IConLisVec>& lis, qintptr socketId)
         {
             m_view = view;
             m_conDet = det;
             m_conLis = lis;
+            m_logIdent = "[Server][" + to_string(socketId) + "]";
+            m_socket = nullptr;
             m_socketId = socketId;
             m_fileName = "";
-            m_logIdent = "[Server][" + to_string(m_socketId) + "]";
-            m_socket = nullptr;
         }
 
-        Income::~Income()
+        Input::~Input()
         {
             for (IConnectionListener* lis : *m_conLis)
             {
-                lis->onConnectionFinished(m_fileName, IConnectionListener::ConnectionType::INCOMING);
+                lis->onConnectionFinished(m_socketId, IConnectionListener::ConnectionType::INCOMING);
             }
         }
         // *************************************************************************************************
 
         // ***** Protected *********************************************************************************
-        void Income::run()
+        void Input::run()
         {
             m_socket = new QTcpSocket();
+            // m_socket->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, QVariant::fromValue(max_packet_payload_size));
 
-            if(!m_socket->setSocketDescriptor(m_socketId))
+            if (!m_socket->setSocketDescriptor(m_socketId))
             {
                 m_view->logIt(m_logIdent + " Can't setup socket");
                 return;
@@ -72,15 +77,13 @@ namespace trans
         // *************************************************************************************************
 
         // ***** Slots *************************************************************************************
-        void Income::onReceivedData()
+        void Input::onReceivedData()
         {
-            if (m_fileName.empty() && m_socket->canReadLine())
+            if (m_fileName.empty())
             {
                 QDir().mkdir(QString::fromStdString(m_conDet->m_dir));
 
-                QString name = QString::fromUtf8(m_socket->readLine()).trimmed();
-                m_fileName = name.toStdString();
-
+                m_fileName = to_string(m_socketId) + ".zip";
                 string filePath = m_conDet->m_dir + "/" + m_fileName;
                 QFile file(QString::fromStdString(filePath));
 
@@ -112,10 +115,11 @@ namespace trans
             }
         }
 
-        void Income::onDisconnected()
+        void Input::onDisconnected()
         {
             m_view->logIt(m_logIdent + " Disconnected");
 
+            m_fileName = "";
             m_socket->close();
             quit();
         }

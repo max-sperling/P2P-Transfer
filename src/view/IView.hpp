@@ -5,6 +5,7 @@
 
 #include "view/IViewFwd.hpp"
 #include <string>
+#include <vector>
 
 namespace view
 {
@@ -37,8 +38,8 @@ namespace view
         virtual ~IViewListener() = default;
 
         /**
-         * @param[in] file ... File path
+         * @param[in] items ... Item paths
          */
-        virtual void onSendTriggered(const std::string& file) = 0;
+        virtual void onSendTriggered(const std::vector<std::string>& items) = 0;
     };
 }

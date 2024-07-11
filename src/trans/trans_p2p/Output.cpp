@@ -2,7 +2,9 @@
 /* Author: Max Sperling */
 /************************/
 
-#include "trans/trans_p2p/Outcome.hpp"
+#include "trans/trans_p2p/Output.hpp"
+#include "trans/trans_p2p/Streamer.hpp"
+#include "trans/trans_p2p/TransP2P.hpp"
 #include "view/IView.hpp"
 #include "conf/IConf.hpp"
 #include <QFile>
@@ -15,42 +17,43 @@ namespace trans
     namespace trans_p2p
     {
         // ***** Public ************************************************************************************
-        Outcome::Outcome(view::IViewSPtr view, const shared_ptr<conf::ConnectionDetails>& det,
-                         const shared_ptr<IConLisVec>& lis, const string& file)
+        Output::Output(view::IViewSPtr view, const shared_ptr<conf::ConnectionDetails>& det,
+                       const shared_ptr<IConLisVec>& lis, const vector<string>& items)
         {
             m_view = view;
             m_conDet = det;
             m_conLis = lis;
-            m_filePath = file;
+            m_items = items;
             m_logIdent = "[Client]";
             m_socket = nullptr;
+            m_socketId = 0;
         }
 
-        Outcome::~Outcome()
+        Output::~Output()
         {
             for (IConnectionListener* lis : *m_conLis)
             {
-                lis->onConnectionFinished(m_filePath, IConnectionListener::ConnectionType::OUTGOING);
+                lis->onConnectionFinished(m_socketId, IConnectionListener::ConnectionType::OUTGOING);
             }
         }
         // *************************************************************************************************
 
         // ***** Protected *********************************************************************************
-        void Outcome::run()
+        void Output::run()
         {
             m_socket = new QTcpSocket();
+            // m_socket->setSocketOption(QAbstractSocket::SendBufferSizeSocketOption, QVariant::fromValue(max_packet_payload_size));
 
             connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 
-            if (!connectToServer()) return;
-            if (!sendFile()) return;
+            if (!sendItems()) return;
 
             exec();
         }
         // *************************************************************************************************
 
         // ***** Private ***********************************************************************************
-        bool Outcome::connectToServer()
+        bool Output::connectToServer()
         {
             if (m_socket->state() == QTcpSocket::ConnectedState)
                 return true;
@@ -64,40 +67,40 @@ namespace trans
             }
             m_view->logIt(m_logIdent + " Connected");
 
+            m_socketId = m_socket->socketDescriptor();
+
             return true;
         }
 
-        bool Outcome::sendFile()
+        bool Output::disconnectFromServer()
         {
-            QFile file(QByteArray::fromStdString(m_filePath));
+            m_socket->disconnectFromHost();
 
-            if (!file.open(QFile::ReadOnly))
+            if (m_socket->state() != QAbstractSocket::UnconnectedState)
             {
-                m_view->logIt(m_logIdent + " Can't open file");
-                return false;
+                m_socket->waitForDisconnected(2000);
             }
 
-            QFileInfo fileInfo(file);
-            QString name = fileInfo.fileName();
-            QByteArray content = file.readAll();
+            return true;
+        }
 
-            m_view->logIt(m_logIdent + " Sending file: " + m_filePath
-                                         + ", Content size: " + std::to_string(content.size()));
+        bool Output::sendItems()
+        {
+            if (!connectToServer()) return false;
 
-            m_socket->write(name.toUtf8() + "\n");
-            m_socket->write(content);
-
-            file.close();
+            Streamer streamer(m_view, m_logIdent, m_socket);
+            streamer.streamItems(m_items);
 
             m_socket->waitForBytesWritten(-1);
-            m_socket->disconnectFromHost();
+
+            if (!disconnectFromServer()) return false;
 
             return true;
         }
         // *************************************************************************************************
 
         // ***** Private Slots *****************************************************************************
-        void Outcome::onDisconnected()
+        void Output::onDisconnected()
         {
             m_view->logIt(m_logIdent + " Disconnected");
 

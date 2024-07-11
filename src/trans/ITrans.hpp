@@ -39,15 +39,15 @@ namespace trans
         enum ConnectionType { OUTGOING, INCOMING };
 
         /**
-         * @param[in] file ... File name
+         * @param[in] socketId ... Socket id
          * @param[in] type ... Connection type
          */
-        virtual void onConnectionStarted(const std::string& file, const ConnectionType type) = 0;
+        virtual void onConnectionStarted(long long socketId, ConnectionType type) = 0;
 
         /**
-         * @param[in] file ... File name
+         * @param[in] socketId ... Socket id
          * @param[in] type ... Connection type
          */
-        virtual void onConnectionFinished(const std::string& file, const ConnectionType type) = 0;
+        virtual void onConnectionFinished(long long socketId, ConnectionType type) = 0;
     };
 }

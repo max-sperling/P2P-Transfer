@@ -3,7 +3,7 @@
 /************************/
 
 #include "trans/trans_p2p/Server.hpp"
-#include "trans/trans_p2p/Income.hpp"
+#include "trans/trans_p2p/Input.hpp"
 #include "conf/IConf.hpp"
 #include <QHostAddress>
 
@@ -32,9 +32,9 @@ namespace trans
         // ***** Protected *********************************************************************************
         void Server::incomingConnection(qintptr socketId)
         {
-            Income *income = new Income(m_view, m_conDet, m_conLis, socketId);
-            connect(income, SIGNAL(finished()), income, SLOT(deleteLater()));
-            income->start();
+            Input* input = new Input(m_view, m_conDet, m_conLis, socketId);
+            connect(input, SIGNAL(finished()), input, SLOT(deleteLater()));
+            input->start();
         }
         // *************************************************************************************************
     }

@@ -3,7 +3,9 @@
 /************************/
 
 #include "view/view_qt/ViewQt.hpp"
+#include "SelectDialog.hpp"
 #include <QFileDialog>
+#include <QMessageBox>
 #include <algorithm>
 #include <iostream>
 
@@ -68,13 +70,15 @@ namespace view
 
         void ViewQt::onSendClicked()
         {
-            QString fileName = QFileDialog::getOpenFileName(m_widWin, "Send", QDir::homePath());
+            SelectDialog dialog(m_widWin);
+            if (dialog.exec() != QDialog::Accepted) { return; }
 
-            if (fileName == "") { return; }
+            vector<string> selectedItems = dialog.selectedItems();
+            if (selectedItems.empty()) { return; }
 
             for (IViewListener* lis : m_viewLis)
             {
-                lis->onSendTriggered(fileName.toStdString());
+                lis->onSendTriggered(selectedItems);
             }
         }
     }

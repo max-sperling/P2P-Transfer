@@ -3,12 +3,11 @@
 /* Author: Max Sperling */
 /************************/
 
-#include "trans/ITrans.hpp"
-#include "view/IViewFwd.hpp"
+#include "view/IView.hpp"
+#include "trans/ITransFwd.hpp"
 #include "conf/IConfFwd.hpp"
 #include <QThread>
 #include <QTcpSocket>
-#include <QFile>
 #include <memory>
 #include <string>
 
@@ -16,34 +15,33 @@ namespace trans
 {
     namespace trans_p2p
     {
-        class Outcome : public QThread
+        class Input : public QThread
         {
             Q_OBJECT
 
         public:
-            Outcome(view::IViewSPtr view, const std::shared_ptr<conf::ConnectionDetails>& det,
-                    const std::shared_ptr<IConLisVec>& lis, const std::string& file);
-            ~Outcome() override;
+            Input(view::IViewSPtr view, const std::shared_ptr<conf::ConnectionDetails>& det,
+                  const std::shared_ptr<IConLisVec>& lis, qintptr socketId);
+            ~Input() override;
 
         protected:
             void run() override;
 
         private:
-            bool connectToServer();
-            bool sendFile();
-
             view::IViewSPtr m_view;
+            std::string m_logIdent;
 
             std::shared_ptr<conf::ConnectionDetails> m_conDet;
             std::shared_ptr<IConLisVec> m_conLis;
 
-            std::string m_filePath;
-            std::string m_logIdent;
-
             QTcpSocket* m_socket;
+            qintptr m_socketId;
 
-            private slots:
-                void onDisconnected();
+            std::string m_fileName;
+
+        private slots:
+            void onReceivedData();
+            void onDisconnected();
         };
     }
 }

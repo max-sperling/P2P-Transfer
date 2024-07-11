@@ -27,9 +27,9 @@ namespace
     public:
         ConLis(QCoreApplication* app) : m_app(app) {}
 
-        void onConnectionStarted(const string& file, const IConnectionListener::ConnectionType type) override {}
+        void onConnectionStarted(long long socketId, IConnectionListener::ConnectionType type) override {}
 
-        void onConnectionFinished(const string& file, const IConnectionListener::ConnectionType type) override
+        void onConnectionFinished(long long socketId, IConnectionListener::ConnectionType type) override
         {
             if (type == IConnectionListener::ConnectionType::INCOMING)
             {

@@ -28,7 +28,7 @@ namespace trans
             ~Client() override;
 
             // --- IViewListener ---------------------
-            void onSendTriggered(const std::string& file) override;
+            void onSendTriggered(const std::vector<std::string>& items) override;
             // ---------------------------------------
 
         private:

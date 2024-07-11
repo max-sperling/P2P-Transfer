@@ -7,6 +7,7 @@
 - CMake (Version >= 3.13)
 - C++-Compiler (Standard >= C++17)
 - Qt (Version = 6)
+- LibArchive
 - GTest (Only for tests)
 
 ## Build the project

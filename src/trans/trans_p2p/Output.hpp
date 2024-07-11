@@ -3,11 +3,12 @@
 /* Author: Max Sperling */
 /************************/
 
-#include "view/IView.hpp"
-#include "trans/ITransFwd.hpp"
+#include "trans/ITrans.hpp"
+#include "view/IViewFwd.hpp"
 #include "conf/IConfFwd.hpp"
 #include <QThread>
 #include <QTcpSocket>
+#include <QFile>
 #include <memory>
 #include <string>
 
@@ -15,32 +16,35 @@ namespace trans
 {
     namespace trans_p2p
     {
-        class Income : public QThread
+        class Output : public QThread
         {
             Q_OBJECT
 
         public:
-            Income(view::IViewSPtr view, const std::shared_ptr<conf::ConnectionDetails>& det,
-                   const std::shared_ptr<IConLisVec>& lis, qintptr socketId);
-            ~Income() override;
+            Output(view::IViewSPtr view, const std::shared_ptr<conf::ConnectionDetails>& det,
+                   const std::shared_ptr<IConLisVec>& lis, const std::vector<std::string>& items);
+            ~Output() override;
 
         protected:
             void run() override;
 
         private:
+            bool sendItems();
+            bool connectToServer();
+            bool disconnectFromServer();
+
             view::IViewSPtr m_view;
 
             std::shared_ptr<conf::ConnectionDetails> m_conDet;
             std::shared_ptr<IConLisVec> m_conLis;
 
-            qintptr m_socketId;
-            std::string m_fileName;
+            std::vector<std::string> m_items;
             std::string m_logIdent;
 
             QTcpSocket* m_socket;
+            qintptr m_socketId;
 
-            private slots:
-                void onReceivedData();
+        private slots:
             void onDisconnected();
         };
     }
