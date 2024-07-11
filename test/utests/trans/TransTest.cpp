@@ -5,10 +5,9 @@
 #include "trans/TransTest.hpp"
 #include "trans/TransFactory.hpp"
 #include "trans/ITrans.hpp"
-#include "conf/IConfFwd.hpp"
 #include "conf/ConfDouble.hpp"
-#include "view/IViewFwd.hpp"
 #include "view/ViewDouble.hpp"
+
 #include <QCoreApplication>
 #include <QTimer>
 #include <filesystem>
@@ -75,7 +74,8 @@ namespace trans
 
         ASSERT_EQ(trans->exec(view, conDet), true);
 
-        QTimer::singleShot(0, [&view, &testInputFilePath]() { view->simulateSend(testInputFilePath); });
+        std::vector<std::string> testFilePaths{testInputFilePath};
+        QTimer::singleShot(0, [&view, &testFilePaths]() { view->simulateSend(testFilePaths); });
 
         ConLis conLis(&app);
         trans->attach(&conLis);

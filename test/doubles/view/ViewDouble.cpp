@@ -31,11 +31,11 @@ namespace view
         return true;
     }
 
-    void ViewDouble::simulateSend(const string& file)
+    void ViewDouble::simulateSend(const vector<string>& files)
     {
         for (IViewListener* lis : m_viewLis)
         {
-            lis->onSendTriggered(file);
+            lis->onSendTriggered(files);
         }
     }
 }

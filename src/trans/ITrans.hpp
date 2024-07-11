@@ -15,8 +15,8 @@ namespace trans
         virtual ~ITrans() = default;
 
         /**
-         * @param[in] viewPtr ... View
-         * @param[in] conDet  ... Connection details
+         * @param[in] view   ... View
+         * @param[in] conDet ... Connection details
          */
         virtual bool exec(const view::IViewSPtr& view, const conf::IConDetSPtr& conDet) = 0;
 

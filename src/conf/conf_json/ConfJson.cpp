@@ -7,27 +7,24 @@
 
 #include <filesystem>
 
-namespace conf
+namespace conf::conf_json
 {
-    namespace conf_json
+    bool ConfJson::read(const std::filesystem::path& configPath, ConnectionDetails& conDetails)
     {
-        bool ConfJson::read(const std::filesystem::path& configPath, ConnectionDetails& conDetails)
+        try
         {
-            try
-            {
-                JsonParser parser;
-                parser.parseFile(configPath);
+            JsonParser parser;
+            parser.parseFile(configPath);
 
-                parser.getValStr("Addr", conDetails.m_addr);
-                parser.getValInt("Port", conDetails.m_port);
-                parser.getValStr("Dir",  conDetails.m_dir);
-            }
-            catch (...)
-            {
-                return false;
-            }
-
-            return true;
+            parser.getValStr("Addr", conDetails.m_addr);
+            parser.getValInt("Port", conDetails.m_port);
+            parser.getValStr("Dir",  conDetails.m_dir);
         }
+        catch (...)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

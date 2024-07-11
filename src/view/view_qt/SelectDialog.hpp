@@ -7,22 +7,19 @@
 #include <QFileSystemModel>
 #include <QTreeView>
 
-namespace view
+namespace view::view_qt
 {
-    namespace view_qt
+    class SelectDialog : public QDialog
     {
-        class SelectDialog : public QDialog
-        {
-            Q_OBJECT
+        Q_OBJECT
 
-        public:
-            SelectDialog(QWidget* parent = nullptr);
+    public:
+        SelectDialog(QWidget* parent = nullptr);
 
-            std::vector<std::string> selectedItems() const;
+        std::vector<std::string> selectedItems() const;
 
-        private:
-            QFileSystemModel* fileSystemModel;
-            QTreeView* treeView;
-        };
-    }
+    private:
+        QFileSystemModel* fileSystemModel;
+        QTreeView* treeView;
+    };
 }

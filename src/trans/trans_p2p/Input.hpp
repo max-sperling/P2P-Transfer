@@ -11,37 +11,34 @@
 #include <memory>
 #include <string>
 
-namespace trans
+namespace trans::trans_p2p
 {
-    namespace trans_p2p
+    class Input : public QThread
     {
-        class Input : public QThread
-        {
-            Q_OBJECT
+        Q_OBJECT
 
-        public:
-            Input(view::IViewSPtr view, const std::shared_ptr<conf::ConnectionDetails>& det,
-                  const std::shared_ptr<IConLisVec>& lis, qintptr socketId);
-            ~Input() override;
+    public:
+        Input(const view::IViewSPtr& view, const std::shared_ptr<conf::ConnectionDetails>& det,
+              const std::shared_ptr<IConLisVec>& lis, qintptr socketId);
+        ~Input() override;
 
-        protected:
-            void run() override;
+    protected:
+        void run() override;
 
-        private:
-            view::IViewSPtr m_view;
-            std::string m_logIdent;
+    private:
+        view::IViewSPtr m_view;
+        std::string m_logIdent;
 
-            std::shared_ptr<conf::ConnectionDetails> m_conDet;
-            std::shared_ptr<IConLisVec> m_conLis;
+        std::shared_ptr<conf::ConnectionDetails> m_conDet;
+        std::shared_ptr<IConLisVec> m_conLis;
 
-            QTcpSocket* m_socket;
-            qintptr m_socketId;
+        QTcpSocket* m_socket;
+        qintptr m_socketId;
 
-            std::string m_fileName;
+        std::string m_fileName;
 
-        private slots:
-            void onReceivedData();
-            void onDisconnected();
-        };
-    }
+    private slots:
+        void onReceivedData();
+        void onDisconnected();
+    };
 }

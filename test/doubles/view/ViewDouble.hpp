@@ -20,9 +20,9 @@ namespace view
     // ---------------------------------------
 
     /**
-     * @param[in] file ... File path
+     * @param[in] files ... File paths
      */
-    void simulateSend(const std::string& file);
+    void simulateSend(const std::vector<std::string>& files);
 
   private:
     std::vector<IViewListener*> m_viewLis;

@@ -83,96 +83,93 @@ namespace
     }
 }
 
-namespace trans
+namespace trans::trans_p2p
 {
-    namespace trans_p2p
+    ClientData::ClientData(view::IViewSPtr view, const std::string& logIdent, QTcpSocket* socket)
+        : m_view(view), m_logIdent(logIdent), m_socket(socket), m_used(0)
     {
-        ClientData::ClientData(view::IViewSPtr view, const std::string& logIdent, QTcpSocket* socket)
-            : m_view(view), m_logIdent(logIdent), m_socket(socket), m_used(0)
+        m_buffer.resize(max_packet_payload_size);
+    }
+
+    Streamer::Streamer(view::IViewSPtr view, const std::string& logIdent, QTcpSocket* socket)
+        : m_view(view), m_logIdent(logIdent), m_clientData({view, logIdent, socket}), m_archive(nullptr) {}
+
+    bool Streamer::streamItems(std::vector<std::string>& items)
+    {
+        m_archive = archive_write_new();
+        archive_write_set_format_zip(m_archive);
+        archive_write_open(m_archive, &m_clientData, memory_write_open, memory_write, memory_write_close);
+
+        for (const auto& item : items)
         {
-            m_buffer.resize(max_packet_payload_size);
+            std::string basePath = static_cast<std::filesystem::path>(item).parent_path();
+            streamItem(item, basePath);
         }
 
-        Streamer::Streamer(view::IViewSPtr view, const std::string& logIdent, QTcpSocket* socket)
-            : m_view(view), m_logIdent(logIdent), m_clientData({view, logIdent, socket}), m_archive(nullptr) {}
+        archive_write_close(m_archive);
+        archive_write_free(m_archive);
 
-        bool Streamer::streamItems(std::vector<std::string>& items)
+        return true;
+    }
+
+    bool Streamer::streamItem(const std::filesystem::path& item, const std::filesystem::path& basePath)
+    {
+        if (is_directory(item))
         {
-            m_archive = archive_write_new();
-            archive_write_set_format_zip(m_archive);
-            archive_write_open(m_archive, &m_clientData, memory_write_open, memory_write, memory_write_close);
-
-            for (const auto& item : items)
+            streamDir(item, basePath);
+            for (auto& subItem : std::filesystem::directory_iterator(item))
             {
-                std::string basePath = static_cast<std::filesystem::path>(item).parent_path();
-                streamItem(item, basePath);
+                streamItem(subItem, basePath);
             }
-
-            archive_write_close(m_archive);
-            archive_write_free(m_archive);
-
-            return true;
+        }
+        else if (is_regular_file(item))
+        {
+            streamFile(item, basePath);
+        }
+        else
+        {
+            // Ignore other files
         }
 
-        bool Streamer::streamItem(const std::filesystem::path& item, const std::filesystem::path& basePath)
-        {
-            if (is_directory(item))
-            {
-                streamDir(item, basePath);
-                for (auto& subItem : std::filesystem::directory_iterator(item))
-                {
-                    streamItem(subItem, basePath);
-                }
-            }
-            else if (is_regular_file(item))
-            {
-                streamFile(item, basePath);
-            }
-            else
-            {
-                // Ignore other files
-            }
+        return true;
+    }
 
-            return true;
+    bool Streamer::streamFile(const std::filesystem::path& filePath, const std::filesystem::path& basePath) const
+    {
+        std::ifstream file(filePath, std::ios::binary);
+        if (!file.is_open()) { return false; }
+
+        std::string relPath = std::filesystem::relative(filePath, basePath).string();
+
+        archive_entry* entry = archive_entry_new();
+        archive_entry_set_pathname(entry, relPath.c_str());
+        archive_entry_set_size(entry, file_size(filePath));
+        archive_entry_set_filetype(entry, S_IFREG);
+        archive_entry_set_perm(entry, 0644);
+        archive_write_header(m_archive, entry);
+
+        std::array<char, max_fread_buffer_size> buffer{};
+        size_t bytesRead{};
+        while ((bytesRead = file.read(buffer.data(), buffer.size()).gcount()) > 0)
+        {
+            archive_write_data(m_archive, buffer.data(), bytesRead);
         }
 
-        bool Streamer::streamFile(const std::filesystem::path& filePath, const std::filesystem::path& basePath) const
-        {
-            std::ifstream file(filePath, std::ios::binary);
-            if (!file.is_open()) { return false; }
+        archive_entry_free(entry);
+        return true;
+    }
 
-            std::string relPath = std::filesystem::relative(filePath, basePath).string();
+    bool Streamer::streamDir(const std::filesystem::path& dirPath, const std::filesystem::path& basePath) const
+    {
+        std::string relPath = std::filesystem::relative(dirPath, basePath).string();
 
-            archive_entry* entry = archive_entry_new();
-            archive_entry_set_pathname(entry, relPath.c_str());
-            archive_entry_set_size(entry, file_size(filePath));
-            archive_entry_set_filetype(entry, S_IFREG);
-            archive_entry_set_perm(entry, 0644);
-            archive_write_header(m_archive, entry);
+        archive_entry* entry = archive_entry_new();
+        archive_entry_set_pathname(entry, relPath.c_str());
+        archive_entry_set_size(entry, 0);
+        archive_entry_set_filetype(entry, S_IFDIR);
+        archive_entry_set_perm(entry, 0644);
+        archive_write_header(m_archive, entry);
 
-            std::array<char, max_fread_buffer_size> buffer{};
-            size_t bytesRead{};
-            while ((bytesRead = file.read(buffer.data(), buffer.size()).gcount()) > 0)
-            {
-                archive_write_data(m_archive, buffer.data(), bytesRead);
-            }
-
-            archive_entry_free(entry);
-            return true;
-        }
-
-        bool Streamer::streamDir(const std::filesystem::path& dirPath, const std::filesystem::path& basePath) const
-        {
-            std::string relPath = std::filesystem::relative(dirPath, basePath).string();
-
-            archive_entry* entry = archive_entry_new();
-            archive_entry_set_pathname(entry, relPath.c_str());
-            archive_entry_set_size(entry, 0);
-            archive_entry_set_filetype(entry, S_IFDIR);
-            archive_entry_set_perm(entry, 0644);
-            archive_write_header(m_archive, entry);
-
-            return true;
-        }
+        return true;
     }
 }

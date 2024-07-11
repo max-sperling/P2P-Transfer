@@ -5,16 +5,13 @@
 
 #include "conf/IConf.hpp"
 
-namespace conf
+namespace conf::conf_json
 {
-    namespace conf_json
+    class ConfJson : public IConf
     {
-        class ConfJson : public IConf
-        {
-        public:
-            // --- IConf -----------------------------
-            bool read(const std::filesystem::path& configPath, ConnectionDetails& conDetails) override;
-            // ---------------------------------------
-        };
-    }
+    public:
+        // --- IConf ------------------------------------------------------------------------------
+        bool read(const std::filesystem::path& configPath, ConnectionDetails& conDetails) override;
+        // ----------------------------------------------------------------------------------------
+    };
 }

@@ -4,82 +4,77 @@
 
 #include "view/view_qt/ViewQt.hpp"
 #include "SelectDialog.hpp"
+
 #include <QFileDialog>
-#include <QMessageBox>
 #include <algorithm>
 #include <iostream>
 
-using namespace std;
-
-namespace view
+namespace view::view_qt
 {
-    namespace view_qt
+    ViewQt::ViewQt()
     {
-        ViewQt::ViewQt()
+        m_widWin = new QWidget();
+        m_lytWin = new QGridLayout();
+        m_lstLog = new QListWidget();
+        m_btnSend = new QPushButton("Send");
+    }
+
+    ViewQt::~ViewQt()
+    {
+        delete m_btnSend;
+        delete m_lstLog;
+        delete m_lytWin;
+        delete m_widWin;
+    }
+
+    bool ViewQt::exec()
+    {
+        connect(m_btnSend, SIGNAL(pressed()), this, SLOT(onSendClicked()));
+
+        m_lytWin->addWidget(m_lstLog);
+        m_lytWin->addWidget(m_btnSend);
+
+        m_widWin->setLayout(m_lytWin);
+        m_widWin->show();
+
+        return true;
+    }
+
+    void ViewQt::logIt(const std::string& msg)
+    {
+        std::cout << msg << std::endl;
+        m_lstLog->addItem(QString::fromStdString(msg));
+    }
+
+    bool ViewQt::attach(IViewListener* lis)
+    {
+        auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
+        if (iter != m_viewLis.end()) { return false; }
+        m_viewLis.push_back(lis);
+
+        return true;
+    }
+
+    bool ViewQt::detach(IViewListener* lis)
+    {
+        auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
+        if (iter == m_viewLis.end()) { return false; }
+        m_viewLis.erase(iter);
+
+        return true;
+    }
+
+    void ViewQt::onSendClicked()
+    {
+        SelectDialog dialog(m_widWin);
+        if (dialog.exec() != QDialog::Accepted) { return; }
+
+        std::vector<std::string> selectedItems = dialog.selectedItems();
+        if (selectedItems.empty()) { return; }
+
+        for (IViewListener* lis : m_viewLis)
         {
-            m_widWin = new QWidget();
-            m_lytWin = new QGridLayout();
-            m_lstLog = new QListWidget();
-            m_btnSend = new QPushButton("Send");
-        }
-
-        ViewQt::~ViewQt()
-        {
-            delete m_btnSend;
-            delete m_lstLog;
-            delete m_lytWin;
-            delete m_widWin;
-        }
-
-        bool ViewQt::exec()
-        {
-            connect(m_btnSend, SIGNAL(pressed()), this, SLOT(onSendClicked()));
-
-            m_lytWin->addWidget(m_lstLog);
-            m_lytWin->addWidget(m_btnSend);
-
-            m_widWin->setLayout(m_lytWin);
-            m_widWin->show();
-
-            return true;
-        }
-
-        void ViewQt::logIt(const string& msg)
-        {
-            std::cout << msg << std::endl;
-            m_lstLog->addItem(QString::fromStdString(msg));
-        }
-
-        bool ViewQt::attach(IViewListener* lis)
-        {
-            auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
-            if (iter != m_viewLis.end()) { return false; }
-            m_viewLis.push_back(lis);
-
-            return true;
-        }
-
-        bool ViewQt::detach(IViewListener* lis)
-        {
-            auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
-            if (iter == m_viewLis.end()) { return false; }
-            m_viewLis.erase(iter);
-
-            return true;
-        }
-
-        void ViewQt::onSendClicked()
-        {
-            SelectDialog dialog(m_widWin);
-            if (dialog.exec() != QDialog::Accepted) { return; }
-
-            vector<string> selectedItems = dialog.selectedItems();
-            if (selectedItems.empty()) { return; }
-
-            for (IViewListener* lis : m_viewLis)
-            {
-                lis->onSendTriggered(selectedItems);
-            }
+            lis->onSendTriggered(selectedItems);
         }
     }
 }

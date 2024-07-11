@@ -12,40 +12,37 @@
 #include <memory>
 #include <string>
 
-namespace trans
+namespace trans::trans_p2p
 {
-    namespace trans_p2p
+    class Output : public QThread
     {
-        class Output : public QThread
-        {
-            Q_OBJECT
+        Q_OBJECT
 
-        public:
-            Output(view::IViewSPtr view, const std::shared_ptr<conf::ConnectionDetails>& det,
-                   const std::shared_ptr<IConLisVec>& lis, const std::vector<std::string>& items);
-            ~Output() override;
+    public:
+        Output(const view::IViewSPtr& view, const std::shared_ptr<conf::ConnectionDetails>& det,
+               const std::shared_ptr<IConLisVec>& lis, const std::vector<std::string>& items);
+        ~Output() override;
 
-        protected:
-            void run() override;
+    protected:
+        void run() override;
 
-        private:
-            bool sendItems();
-            bool connectToServer();
-            bool disconnectFromServer();
+    private:
+        bool sendItems();
+        bool connectToServer();
+        bool disconnectFromServer();
 
-            view::IViewSPtr m_view;
+        view::IViewSPtr m_view;
 
-            std::shared_ptr<conf::ConnectionDetails> m_conDet;
-            std::shared_ptr<IConLisVec> m_conLis;
+        std::shared_ptr<conf::ConnectionDetails> m_conDet;
+        std::shared_ptr<IConLisVec> m_conLis;
 
-            std::vector<std::string> m_items;
-            std::string m_logIdent;
+        std::vector<std::string> m_items;
+        std::string m_logIdent;
 
-            QTcpSocket* m_socket;
-            qintptr m_socketId;
+        QTcpSocket* m_socket;
+        qintptr m_socketId;
 
-        private slots:
-            void onDisconnected();
-        };
-    }
+    private slots:
+        void onDisconnected();
+    };
 }
