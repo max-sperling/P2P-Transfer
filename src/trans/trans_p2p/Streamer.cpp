@@ -16,15 +16,11 @@
 
 namespace
 {
-    constexpr size_t max_packet_payload_size = 4 * 1024 * 1024;
-    constexpr size_t max_fread_buffer_size = 1 * 1024 * 1024;
+    constexpr size_t packet_payload_size = 4 * 1024 * 1024; // 4 MiB
+    constexpr size_t max_fread_buffer_size = 10 * 1024 * 1024; // 10 MiB
 
-    int memory_write_open(archive* /*archive*/, void* client_data)
+    int memory_write_open(archive* /*archive*/, void* /*client_data*/)
     {
-        auto* clientData = static_cast<trans::trans_p2p::ClientData*>(client_data);
-
-        clientData->m_used = 0;
-
         return ARCHIVE_OK;
     }
 
@@ -32,53 +28,16 @@ namespace
     {
         auto* clientData = static_cast<trans::trans_p2p::ClientData*>(client_data);
 
-        if (clientData->m_buffer.size() < clientData->m_used + length)
-        {
-            clientData->m_buffer.resize(clientData->m_used + length);
-        }
+        clientData->m_view->logIt(clientData->m_logIdent + " Send packet with " + std::to_string(length) + " bytes");
 
-        std::copy(static_cast<const char*>(buff),
-                  static_cast<const char*>(buff) + length,
-                  &clientData->m_buffer[clientData->m_used]);
-
-        clientData->m_used += length;
-
-        if (clientData->m_used >= max_packet_payload_size)
-        {
-            clientData->m_view->logIt(clientData->m_logIdent
-                + " Send packet with " + std::to_string(max_packet_payload_size) + " bytes");
-
-            clientData->m_socket->write(&clientData->m_buffer[0], max_packet_payload_size);
-            clientData->m_socket->flush();
-
-            if (clientData->m_used > max_packet_payload_size)
-            {
-                std::copy(&clientData->m_buffer[max_packet_payload_size],
-                          &clientData->m_buffer[clientData->m_used],
-                          &clientData->m_buffer[0]);
-            }
-
-            clientData->m_used -= max_packet_payload_size;
-        }
+        clientData->m_socket->write(static_cast<const char*>(buff), length);
+        clientData->m_socket->flush();
 
         return length;
     }
 
-    int memory_write_close(archive* /*archive*/, void* client_data)
+    int memory_write_close(archive* /*archive*/, void* /*client_data*/)
     {
-        auto* clientData = static_cast<trans::trans_p2p::ClientData*>(client_data);
-
-        if (clientData->m_used > 0)
-        {
-            clientData->m_view->logIt(clientData->m_logIdent
-                + " Send packet with " + std::to_string(clientData->m_used) + " bytes");
-
-            clientData->m_socket->write(&clientData->m_buffer[0], clientData->m_used);
-            clientData->m_socket->flush();
-
-            clientData->m_used = 0;
-        }
-
         return ARCHIVE_OK;
     }
 }
@@ -86,10 +45,7 @@ namespace
 namespace trans::trans_p2p
 {
     ClientData::ClientData(view::IViewSPtr view, const std::string& logIdent, QTcpSocket* socket)
-        : m_view(view), m_logIdent(logIdent), m_socket(socket), m_used(0)
-    {
-        m_buffer.resize(max_packet_payload_size);
-    }
+        : m_view(view), m_logIdent(logIdent), m_socket(socket) {}
 
     Streamer::Streamer(view::IViewSPtr view, const std::string& logIdent, QTcpSocket* socket)
         : m_view(view), m_logIdent(logIdent), m_clientData({view, logIdent, socket}), m_archive(nullptr) {}
@@ -98,6 +54,7 @@ namespace trans::trans_p2p
     {
         m_archive = archive_write_new();
         archive_write_set_format_zip(m_archive);
+        archive_write_set_bytes_per_block(m_archive, packet_payload_size);
         archive_write_open(m_archive, &m_clientData, memory_write_open, memory_write, memory_write_close);
 
         for (const auto& item : items)
@@ -139,7 +96,7 @@ namespace trans::trans_p2p
         std::ifstream file(filePath, std::ios::binary);
         if (!file.is_open()) { return false; }
 
-        std::string relPath = std::filesystem::relative(filePath, basePath).string();
+        std::string relPath = relative(filePath, basePath).string();
 
         archive_entry* entry = archive_entry_new();
         archive_entry_set_pathname(entry, relPath.c_str());
@@ -148,11 +105,11 @@ namespace trans::trans_p2p
         archive_entry_set_perm(entry, 0644);
         archive_write_header(m_archive, entry);
 
-        std::array<char, max_fread_buffer_size> buffer{};
         size_t bytesRead{};
-        while ((bytesRead = file.read(buffer.data(), buffer.size()).gcount()) > 0)
+        auto buffer = std::make_unique<std::array<char, max_fread_buffer_size>>();
+        while ((bytesRead = file.read(buffer->data(), buffer->size()).gcount()) > 0)
         {
-            archive_write_data(m_archive, buffer.data(), bytesRead);
+            archive_write_data(m_archive, buffer->data(), bytesRead);
         }
 
         archive_entry_free(entry);
@@ -161,7 +118,7 @@ namespace trans::trans_p2p
 
     bool Streamer::streamDir(const std::filesystem::path& dirPath, const std::filesystem::path& basePath) const
     {
-        std::string relPath = std::filesystem::relative(dirPath, basePath).string();
+        std::string relPath = relative(dirPath, basePath).string();
 
         archive_entry* entry = archive_entry_new();
         archive_entry_set_pathname(entry, relPath.c_str());

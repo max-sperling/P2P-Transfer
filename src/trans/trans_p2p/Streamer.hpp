@@ -21,9 +21,6 @@ namespace trans::trans_p2p
         view::IViewSPtr m_view;
         const std::string& m_logIdent;
         QTcpSocket* m_socket;
-
-        std::vector<char> m_buffer;
-        size_t m_used;
     };
 
     class Streamer
