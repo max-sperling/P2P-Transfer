@@ -13,12 +13,9 @@
 ## Build the project
 
 ### 1. Setup
-- cmake -S . -B build -D CMAKE_INSTALL_PREFIX=install
+- cmake -S . -B build
 
 ### 2. Build
 - All: cmake --build build
 - Main-app: cmake --build build --target Main-app
 - Test-app: cmake --build build --target Test-app
-
-### 3. Install
-- Main-app: cmake --install build
