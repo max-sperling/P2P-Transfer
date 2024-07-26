@@ -3,30 +3,17 @@
 /************************/
 
 #include "trans/trans_p2p/Input.hpp"
+
 #include "trans/trans_p2p/TransP2P.hpp"
 #include "trans/ITrans.hpp"
 #include "conf/IConf.hpp"
 
+#include <QBuffer>
 #include <QDir>
-#include <QFile>
+#include <fstream>
+#include <iostream>
 
 using namespace std;
-
-namespace
-{
-    bool openFile(QFile& file, const QFlags<QIODevice::OpenMode::enum_type> mode, const view::IViewSPtr& view, const std::string& logIdent)
-    {
-        bool isOpen = file.open(mode);
-
-        if (!isOpen)
-        {
-            view->logIt(logIdent + " Can't open file " + file.fileName().toStdString());
-            return false;
-        }
-
-        return true;
-    }
-}
 
 namespace trans::trans_p2p
 {
@@ -40,7 +27,6 @@ namespace trans::trans_p2p
         m_logIdent = "[Server][" + to_string(socketId) + "]";
         m_socket = nullptr;
         m_socketId = socketId;
-        m_fileName = "";
     }
 
     Input::~Input()
@@ -76,45 +62,9 @@ namespace trans::trans_p2p
     // ***** Slots *************************************************************************************
     void Input::onReceivedData()
     {
-        if (m_fileName.empty()) {
-            QDir().mkdir(QString::fromStdString(m_conDet->m_dir));
-
-            m_fileName = to_string(m_socketId) + ".zip";
-            string filePath = m_conDet->m_dir + "/" + m_fileName;
-            QFile file(QString::fromStdString(filePath));
-
-            {
-                constexpr QFlags mode = QIODevice::WriteOnly;
-                if (!openFile(file, mode, m_view, m_logIdent)) { return; }
-            }
-
-            file.resize(0);
-            file.close();
-
-            m_view->logIt(m_logIdent + " Created file: " + m_fileName);
-        }
-
-        if (!m_fileName.empty() && m_socket->bytesAvailable())
+        while (m_socket->bytesAvailable())
         {
-            string filePath = m_conDet->m_dir + "/" + m_fileName;
-            QFile file(QString::fromStdString(filePath));
-
-            {
-                constexpr QFlags mode = (QIODevice::WriteOnly | QIODevice::Append);
-                if (!openFile(file, mode, m_view, m_logIdent)) { return; }
-            }
-
-            while (m_socket->bytesAvailable())
-            {
-                QByteArray content = m_socket->readAll();
-
-                m_view->logIt(m_logIdent + " Received data for file: " + m_fileName
-                                             + ", Content size: " + std::to_string(content.size()));
-
-                file.write(content);
-            }
-
-            file.close();
+            m_receivedData.append(m_socket->readAll());
         }
     }
 
@@ -122,9 +72,66 @@ namespace trans::trans_p2p
     {
         m_view->logIt(m_logIdent + " Disconnected");
 
-        m_fileName = "";
+        if (!m_receivedData.isEmpty())
+        {
+            const auto outputPath = std::filesystem::current_path() / m_conDet->m_dir / to_string(m_socketId);
+            create_directories(outputPath);
+            for (const auto& item : std::filesystem::directory_iterator(outputPath))
+            {
+                remove_all(item);
+            }
+
+            unzipFileFromMemory(m_receivedData, outputPath);
+            m_receivedData.clear();
+        }
+
         m_socket->close();
         quit();
+    }
+
+    void Input::unzipFileFromMemory(const QByteArray& receivedData, const std::filesystem::path& outputFolder)
+    {
+        archive* archive = archive_read_new();
+        archive_read_support_format_zip(archive);
+        archive_read_support_filter_all(archive);
+
+        int r = archive_read_open_memory(archive, receivedData.constData(), receivedData.size());
+        if (r != ARCHIVE_OK) {
+            std::cerr << "Error opening archive: " << archive_error_string(archive) << std::endl;
+            archive_read_free(archive);
+            return;
+        }
+
+        archive_entry* entry;
+        while (true)
+        {
+            r = archive_read_next_header(archive, &entry);
+            if (r == ARCHIVE_EOF) {
+                std::cout << "Reached end of file" << std::endl;
+                break;
+            }
+            if (r < ARCHIVE_WARN) {
+                std::cerr << "Warning reading header: " << archive_error_string(archive) << std::endl;
+                break;
+            }
+            if (r < ARCHIVE_OK) {
+                std::cerr << "Error reading header: " << archive_error_string(archive) << std::endl;
+                break;
+            }
+
+            std::filesystem::path outputPath = outputFolder / archive_entry_pathname(entry);
+            archive_entry_set_pathname(entry, outputPath.string().c_str());
+
+            r = archive_read_extract(archive, entry, ARCHIVE_EXTRACT_PERM | ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_ACL | ARCHIVE_EXTRACT_FFLAGS);
+            if (r < ARCHIVE_WARN) {
+                std::cerr << "Warning extracting file: " << archive_error_string(archive) << std::endl;
+            } else if (r < ARCHIVE_OK) {
+                std::cerr << "Error extracting file: " << archive_error_string(archive) << std::endl;
+            }
+        }
+
+        archive_write_close(archive);
+        archive_read_free(archive);
     }
     // *************************************************************************************************
 }

@@ -6,13 +6,24 @@
 #include "view/IView.hpp"
 #include "trans/ITransFwd.hpp"
 #include "conf/IConfFwd.hpp"
+
+#include <archive.h>
+#include <archive_entry.h>
 #include <QThread>
 #include <QTcpSocket>
+#include <filesystem>
+#include <fstream>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 namespace trans::trans_p2p
 {
+    struct InputClientData
+    {
+        std::vector<char> m_dataBuffer;
+    };
+
     class Input : public QThread
     {
         Q_OBJECT
@@ -26,6 +37,8 @@ namespace trans::trans_p2p
         void run() override;
 
     private:
+        void unzipFileFromMemory(const QByteArray& receivedData, const std::filesystem::path& outputFolder);
+
         view::IViewSPtr m_view;
         std::string m_logIdent;
 
@@ -35,7 +48,7 @@ namespace trans::trans_p2p
         QTcpSocket* m_socket;
         qintptr m_socketId;
 
-        std::string m_fileName;
+        QByteArray m_receivedData;
 
     private slots:
         void onReceivedData();
