@@ -21,7 +21,17 @@ namespace trans::trans_p2p
 {
     struct InputClientData
     {
-        std::vector<char> m_dataBuffer;
+        QByteArray m_dataBuffer{};
+        ssize_t m_currentPos{};
+    };
+
+    enum class State
+    {
+        readHeader,
+        readFile,
+        reachedEOF,
+        waitForData,
+        errorState
     };
 
     class Input : public QThread
@@ -37,7 +47,13 @@ namespace trans::trans_p2p
         void run() override;
 
     private:
-        void unzipFileFromMemory(const QByteArray& receivedData, const std::filesystem::path& outputFolder);
+        bool readHeader();
+        bool readFile();
+        bool updateState(int input);
+
+        static ssize_t myread(struct archive *a, void *client_data, const void **buff);
+        static int myopen(struct archive *a, void *client_data);
+        static int myclose(struct archive *a, void *client_data);
 
         view::IViewSPtr m_view;
         std::string m_logIdent;
@@ -48,7 +64,13 @@ namespace trans::trans_p2p
         QTcpSocket* m_socket;
         qintptr m_socketId;
 
-        QByteArray m_receivedData;
+        archive* m_archive;
+        archive_entry* m_entry;
+
+        InputClientData m_clientData;
+        State m_archiveState;
+        std::filesystem::path m_outputPath;
+        std::filesystem::path m_currentOutputPath;
 
     private slots:
         void onReceivedData();
