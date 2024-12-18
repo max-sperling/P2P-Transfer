@@ -10,6 +10,7 @@ using namespace std;
 
 namespace conf
 {
+    // ***** Public ***************************************************************************************************
     IConfSPtr ConfFactory::create(const ConfType type)
     {
         IConfSPtr confPtr;
@@ -23,4 +24,5 @@ namespace conf
 
         return confPtr;
     }
+    // ****************************************************************************************************************
 }

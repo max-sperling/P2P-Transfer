@@ -13,7 +13,8 @@
 ## Build the project
 
 ### 1. Setup
-- cmake -S . -B build
+- Debug: cmake -S . -B build -D CMAKE_BUILD_TYPE=Debug
+- Release: cmake -S . -B build -D CMAKE_BUILD_TYPE=Release
 
 ### 2. Build
 - All: cmake --build build

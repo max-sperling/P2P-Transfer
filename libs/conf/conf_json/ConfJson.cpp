@@ -5,12 +5,14 @@
 #include "conf/conf_json/ConfJson.hpp"
 
 #include "conf/conf_json/JsonParser.hpp"
+#include "view/IView.hpp"
 
 #include <filesystem>
 
 namespace conf::conf_json
 {
-    bool ConfJson::read(const std::filesystem::path& configPath, ConnectionDetails& conDetails)
+    // ***** Public ***************************************************************************************************
+    bool ConfJson::read(const view::IViewSPtr& view, const std::filesystem::path& configPath, ConnectionDetails& conDetails)
     {
         try
         {
@@ -21,11 +23,13 @@ namespace conf::conf_json
             parser.getValInt("Port", conDetails.m_port);
             parser.getValStr("Dir",  conDetails.m_dir);
         }
-        catch (...)
+        catch (const std::exception& e)
         {
+            view->logIt(e.what());
             return false;
         }
 
         return true;
     }
+    // ****************************************************************************************************************
 }

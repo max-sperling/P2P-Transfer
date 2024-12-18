@@ -4,6 +4,7 @@
 /************************/
 
 #include "conf/IConfFwd.hpp"
+#include "view/IViewFwd.hpp"
 
 #include <filesystem>
 #include <string>
@@ -16,10 +17,11 @@ namespace conf
         virtual ~IConf() = default;
 
         /**
+         * @param[in]  view       ... View for logging
          * @param[in]  configPath ... Path to the config
          * @param[out] conDetails ... Connection details
          */
-        virtual bool read(const std::filesystem::path& configPath, ConnectionDetails& conDetails) = 0;
+        virtual bool read(const view::IViewSPtr& view, const std::filesystem::path& configPath, ConnectionDetails& conDetails) = 0;
     };
 
     struct ConnectionDetails

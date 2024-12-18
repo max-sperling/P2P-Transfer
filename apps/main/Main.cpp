@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 {
     std::filesystem::path binPath(argv[0]);
     std::filesystem::path confPath = binPath.parent_path() / std::string("conf/config.json");
+    conf::IConDetSPtr conDet = make_shared<conf::ConnectionDetails>();
 
     QApplication app(argc, argv);
 
@@ -27,14 +28,8 @@ int main(int argc, char *argv[])
     view::IViewSPtr view = view::ViewFactory::create(view::ViewType::Qute);
 
     view->exec();
-
-    auto conDet = make_shared<conf::ConnectionDetails>();
-    if (!conf->read(confPath, *conDet))
-    {
-        view->logIt("Error while reading Config");
-    }
-
-    if (!trans->exec(view, conDet)) return 1;
+    if (!conf->read(view, confPath, *conDet)) { view->logIt("Reading config failed"); }
+    if (!trans->exec(view, conDet)) { view->logIt("Setup transport failed"); }
 
     app.exec();
 

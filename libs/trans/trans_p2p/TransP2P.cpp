@@ -14,14 +14,14 @@ namespace trans::trans_p2p
     {
         m_conLis = make_shared<IConLisVec>();
 
+        m_client = make_unique<Client>(view, conDet, m_conLis);
+
         m_server = make_unique<Server>(view, conDet, m_conLis);
         if (!m_server->init())
         {
-            view->logIt("Error while init Server");
+            view->logIt("Can't initialize server");
             return false;
         }
-
-        m_client = make_unique<Client>(view, conDet, m_conLis);
 
         return true;
     }

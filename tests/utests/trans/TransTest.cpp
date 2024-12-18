@@ -4,7 +4,7 @@
 
 #include "trans/TransTest.hpp"
 
-#include "conf/ConfDouble.hpp"
+#include "conf/IConf.hpp"
 #include "trans/TransFactory.hpp"
 #include "trans/ITrans.hpp"
 #include "view/ViewDouble.hpp"

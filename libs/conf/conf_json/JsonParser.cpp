@@ -8,6 +8,7 @@ using namespace std;
 
 namespace conf::conf_json
 {
+    // ***** Public ***************************************************************************************************
     JsonParser::JsonParser()
     {
         resetParser();
@@ -23,7 +24,7 @@ namespace conf::conf_json
         resetParser();
 
         m_file.open(filePath);
-        if (!m_file.is_open()) throw;
+        if (!m_file.is_open()) { throw std::runtime_error("Can't open file: " + filePath.string()); }
 
         char c;
         while (!m_file.eof())
@@ -38,19 +39,21 @@ namespace conf::conf_json
     void JsonParser::getValStr(const string& name, string& value)
     {
         auto iter = m_data.find(name);
-        if (iter == m_data.end()) throw;
-        if (iter->second.type != Data::Types::text) throw;
+        if (iter == m_data.end()) {throw std::runtime_error("Can't find key: " + name); }
+        if (iter->second.type != Data::Types::text) { throw std::runtime_error("Value is not a text"); }
         value = iter->second.value;
     }
 
     void JsonParser::getValInt(const string& name, unsigned int& value)
     {
         auto iter = m_data.find(name);
-        if (iter == m_data.end()) throw;
-        if (iter->second.type != Data::Types::number) throw;
+        if (iter == m_data.end()) { throw std::runtime_error("Can't find key: " + name); }
+        if (iter->second.type != Data::Types::number) { throw std::runtime_error("Value is not a number"); }
         value = stoi(iter->second.value);
     }
+    // ****************************************************************************************************************
 
+    // ***** Private **************************************************************************************************
     void JsonParser::resetParser()
     {
         if (m_file.is_open()) { m_file.close(); }
@@ -158,4 +161,5 @@ namespace conf::conf_json
                 break;
         }
     }
+    // ****************************************************************************************************************
 }
