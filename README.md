@@ -5,7 +5,7 @@
 
 ## Requirements
 - CMake (Version >= 3.13)
-- C++-Compiler (Standard >= C++17)
+- C++-Compiler (Standard >= C++20)
 - Qt (Version = 6)
 - LibArchive
 - GTest (Only for tests)

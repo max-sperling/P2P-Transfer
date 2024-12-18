@@ -6,10 +6,9 @@
 #include "view/IViewFwd.hpp"
 
 #include <archive.h>
-#include <filesystem>
 #include <QTcpSocket>
 
-#include "TransP2P.hpp"
+#include <filesystem>
 
 namespace trans::trans_p2p
 {

@@ -2,7 +2,7 @@
 /* Author: Max Sperling */
 /************************/
 
-#include "ConfDouble.hpp"
+#include "conf/ConfDouble.hpp"
 
 namespace conf
 {

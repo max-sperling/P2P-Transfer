@@ -3,11 +3,10 @@
 /* Author: Max Sperling */
 /************************/
 
-#include <string>
-#include <map>
-#include <fstream>
-
 #include <filesystem>
+#include <fstream>
+#include <map>
+#include <string>
 
 namespace conf::conf_json
 {

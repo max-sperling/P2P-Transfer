@@ -3,10 +3,12 @@
 /* Author: Max Sperling */
 /************************/
 
+#include "conf/IConfFwd.hpp"
 #include "trans/ITrans.hpp"
 #include "view/IView.hpp"
-#include "conf/IConfFwd.hpp"
+
 #include <QObject>
+
 #include <memory>
 #include <string>
 

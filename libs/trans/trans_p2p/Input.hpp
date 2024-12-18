@@ -3,11 +3,13 @@
 /* Author: Max Sperling */
 /************************/
 
-#include "view/IView.hpp"
-#include "trans/ITransFwd.hpp"
 #include "conf/IConfFwd.hpp"
+#include "trans/ITransFwd.hpp"
+#include "view/IView.hpp"
+
 #include <QThread>
 #include <QTcpSocket>
+
 #include <memory>
 #include <string>
 

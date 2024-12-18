@@ -3,6 +3,7 @@
 /************************/
 
 #include "conf/ConfFactory.hpp"
+
 #include "conf/conf_json/ConfJson.hpp"
 
 using namespace std;

@@ -3,6 +3,7 @@
 /************************/
 
 #include "view/ViewDouble.hpp"
+
 // #include <iostream>
 
 using namespace std;

@@ -3,13 +3,15 @@
 /************************/
 
 #include "trans/TransTest.hpp"
+
+#include "conf/ConfDouble.hpp"
 #include "trans/TransFactory.hpp"
 #include "trans/ITrans.hpp"
-#include "conf/ConfDouble.hpp"
 #include "view/ViewDouble.hpp"
 
 #include <QCoreApplication>
 #include <QTimer>
+
 #include <filesystem>
 #include <fstream>
 

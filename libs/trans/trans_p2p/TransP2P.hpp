@@ -3,13 +3,12 @@
 /* Author: Max Sperling */
 /************************/
 
-#include "trans/ITrans.hpp"
 #include "conf/IConfFwd.hpp"
-#include <memory>
-#include <vector>
-
-#include "trans/trans_p2p/Server.hpp"
+#include "trans/ITrans.hpp"
 #include "trans/trans_p2p/Client.hpp"
+#include "trans/trans_p2p/Server.hpp"
+
+#include <memory>
 
 namespace trans::trans_p2p
 {

@@ -3,9 +3,10 @@
 /************************/
 
 #include "trans/trans_p2p/Input.hpp"
+
+#include "conf/IConf.hpp"
 #include "trans/trans_p2p/TransP2P.hpp"
 #include "trans/ITrans.hpp"
-#include "conf/IConf.hpp"
 
 #include <QDir>
 #include <QFile>
@@ -30,7 +31,7 @@ namespace
 
 namespace trans::trans_p2p
 {
-    // ***** Public ************************************************************************************
+    // ***** Public ***************************************************************************************************
     Input::Input(const view::IViewSPtr& view, const shared_ptr<conf::ConnectionDetails>& det,
                  const shared_ptr<IConLisVec>& lis, qintptr socketId)
     {
@@ -50,9 +51,9 @@ namespace trans::trans_p2p
             lis->onConnectionFinished(m_socketId, IConnectionListener::ConnectionType::INCOMING);
         }
     }
-    // *************************************************************************************************
+    // ****************************************************************************************************************
 
-    // ***** Protected *********************************************************************************
+    // ***** Protected ************************************************************************************************
     void Input::run()
     {
         m_socket = new QTcpSocket();
@@ -71,15 +72,17 @@ namespace trans::trans_p2p
 
         exec();
     }
-    // *************************************************************************************************
+    // ****************************************************************************************************************
 
-    // ***** Slots *************************************************************************************
+    // ***** Slots ****************************************************************************************************
     void Input::onReceivedData()
     {
-        if (m_fileName.empty()) {
+        if (m_fileName.empty())
+        {
             QDir().mkdir(QString::fromStdString(m_conDet->m_dir));
 
-            m_fileName = to_string(m_socketId) + ".zip";
+            const auto curTime = std::chrono::system_clock::now();
+            m_fileName = std::format("{:%Y-%m-%d %H:%M:%S}", curTime) + ".zip";
             string filePath = m_conDet->m_dir + "/" + m_fileName;
             QFile file(QString::fromStdString(filePath));
 
@@ -108,8 +111,7 @@ namespace trans::trans_p2p
             {
                 QByteArray content = m_socket->readAll();
 
-                m_view->logIt(m_logIdent + " Received data for file: " + m_fileName
-                                             + ", Content size: " + std::to_string(content.size()));
+                m_view->logIt(m_logIdent + " Received data for file: " + m_fileName + ", Content size: " + std::to_string(content.size()));
 
                 file.write(content);
             }
@@ -126,5 +128,5 @@ namespace trans::trans_p2p
         m_socket->close();
         quit();
     }
-    // *************************************************************************************************
+    // ****************************************************************************************************************
 }

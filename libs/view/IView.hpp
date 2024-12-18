@@ -4,6 +4,7 @@
 /************************/
 
 #include "view/IViewFwd.hpp"
+
 #include <string>
 #include <vector>
 

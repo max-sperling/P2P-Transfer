@@ -3,13 +3,14 @@
 /************************/
 
 #include "trans/trans_p2p/Client.hpp"
+
 #include "trans/trans_p2p/Output.hpp"
 
 using namespace std;
 
 namespace trans::trans_p2p
 {
-    // ***** Public ************************************************************************************
+    // ***** Public ***************************************************************************************************
     Client::Client(const view::IViewSPtr& view, const shared_ptr<conf::ConnectionDetails>& det, const shared_ptr<IConLisVec>& lis)
     {
         m_view = view;
@@ -30,5 +31,5 @@ namespace trans::trans_p2p
         connect(output, SIGNAL(finished()), output, SLOT(deleteLater()));
         output->start();
     }
-    // *************************************************************************************************
+    // ****************************************************************************************************************
 }

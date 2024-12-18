@@ -4,9 +4,11 @@
 /************************/
 
 #include "view/IView.hpp"
+
 #include <QGridLayout>
 #include <QListWidget>
 #include <QPushButton>
+
 #include <vector>
 
 namespace view::view_qt

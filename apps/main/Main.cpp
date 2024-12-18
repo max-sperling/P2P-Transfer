@@ -2,14 +2,15 @@
 /* Author: Max Sperling */
 /************************/
 
+#include "conf/ConfFactory.hpp"
 #include "conf/IConf.hpp"
 #include "trans/ITrans.hpp"
-#include "view/IView.hpp"
-#include "conf/ConfFactory.hpp"
 #include "trans/TransFactory.hpp"
+#include "view/IView.hpp"
 #include "view/ViewFactory.hpp"
 
 #include <QApplication>
+
 #include <filesystem>
 
 using namespace std;

@@ -3,9 +3,11 @@
 /************************/
 
 #include "view/view_qt/ViewQt.hpp"
-#include "SelectDialog.hpp"
+
+#include "view/view_qt/SelectDialog.hpp"
 
 #include <QFileDialog>
+
 #include <algorithm>
 #include <iostream>
 

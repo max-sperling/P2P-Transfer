@@ -3,7 +3,9 @@
 /************************/
 
 #include "view/ViewFactory.hpp"
+
 #include "view/view_qt/ViewQt.hpp"
+
 #include <memory>
 
 using namespace std;

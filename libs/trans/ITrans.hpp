@@ -3,8 +3,8 @@
 /* Author: Max Sperling */
 /************************/
 
-#include "trans/ITransFwd.hpp"
 #include "conf/IConfFwd.hpp"
+#include "trans/ITransFwd.hpp"
 #include "view/IViewFwd.hpp"
 
 namespace trans

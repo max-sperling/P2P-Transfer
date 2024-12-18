@@ -3,6 +3,7 @@
 /************************/
 
 #include "trans/trans_p2p/Streamer.hpp"
+
 #include "view/IView.hpp"
 
 #include <archive.h>
@@ -11,8 +12,6 @@
 #include <array>
 #include <filesystem>
 #include <fstream>
-
-#include "TransP2P.hpp"
 
 namespace
 {
