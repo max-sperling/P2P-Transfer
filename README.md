@@ -1,7 +1,7 @@
 # P2P-Transfer
 
 ## Description
-- "P2P-Transfer" uses TCP to receive/send files from/to another peer.
+- "P2P-Transfer" uses TCP to receive/send files packed as zip archive from/to another peer.
 
 ## Requirements
 - CMake (Version >= 3.13)
