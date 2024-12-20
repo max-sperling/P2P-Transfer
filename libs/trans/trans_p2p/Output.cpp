@@ -14,10 +14,10 @@ using namespace std;
 namespace trans::trans_p2p
 {
     // ***** Public ***************************************************************************************************
-    Output::Output(const view::IViewSPtr& view, const shared_ptr<conf::ConnectionDetails>& det,
+    Output::Output(const view::ILoggerSPtr& log, const shared_ptr<conf::ConnectionDetails>& det,
                    const shared_ptr<IConLisVec>& lis, const vector<string>& items)
     {
-        m_view = view;
+        m_logger = log;
         m_conDet = det;
         m_conLis = lis;
         m_items = items;
@@ -59,10 +59,10 @@ namespace trans::trans_p2p
 
         if (!m_socket->waitForConnected(2000))
         {
-            m_view->logIt(m_logIdent + " Can't connect");
+            m_logger->logIt(m_logIdent + " Can't connect");
             return false;
         }
-        m_view->logIt(m_logIdent + " Connected");
+        m_logger->logIt(m_logIdent + " Connected");
 
         m_socketId = m_socket->socketDescriptor();
 
@@ -85,7 +85,7 @@ namespace trans::trans_p2p
     {
         if (!connectToServer()) return false;
 
-        Streamer streamer(m_view, m_logIdent, m_socket);
+        Streamer streamer(m_logger, m_logIdent, m_socket);
         streamer.streamItems(m_items);
 
         m_socket->waitForBytesWritten(-1);
@@ -99,7 +99,7 @@ namespace trans::trans_p2p
     // ***** Private Slots ********************************************************************************************
     void Output::onDisconnected()
     {
-        m_view->logIt(m_logIdent + " Disconnected");
+        m_logger->logIt(m_logIdent + " Disconnected");
 
         m_socket->close();
         quit();

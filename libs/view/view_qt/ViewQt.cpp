@@ -13,6 +13,7 @@
 
 namespace view::view_qt
 {
+    // ***** Public ***************************************************************************************************
     ViewQt::ViewQt()
     {
         m_widWin = new QWidget();
@@ -42,12 +43,6 @@ namespace view::view_qt
         return true;
     }
 
-    void ViewQt::logIt(const std::string& msg)
-    {
-        std::cout << msg << std::endl;
-        m_lstLog->addItem(QString::fromStdString(msg));
-    }
-
     bool ViewQt::attach(IViewListener* lis)
     {
         auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
@@ -66,6 +61,14 @@ namespace view::view_qt
         return true;
     }
 
+    void ViewQt::logIt(const std::string& msg)
+    {
+        std::cout << msg << std::endl;
+        m_lstLog->addItem(QString::fromStdString(msg));
+    }
+    // ****************************************************************************************************************
+
+    // ***** Slots ****************************************************************************************************
     void ViewQt::onSendClicked()
     {
         SelectDialog dialog(m_widWin);
@@ -79,4 +82,5 @@ namespace view::view_qt
             lis->onSendTriggered(selectedItems);
         }
     }
+    // ****************************************************************************************************************
 }

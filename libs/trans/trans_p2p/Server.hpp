@@ -20,11 +20,11 @@ namespace trans::trans_p2p
 
     public:
         /**
-         * @param[in] view ... View
-         * @param[in] det  ... Connection details
-         * @param[in] lis  ... Connection listener
+         * @param[in] log ... Logger
+         * @param[in] det ... Connection details
+         * @param[in] lis ... Connection listener
          */
-        Server(const view::IViewSPtr& view, const std::shared_ptr<conf::ConnectionDetails>& det, const std::shared_ptr<IConLisVec>& lis);
+        Server(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det, const std::shared_ptr<IConLisVec>& lis);
         ~Server() override = default;
 
         bool init();
@@ -33,7 +33,7 @@ namespace trans::trans_p2p
         void incomingConnection(qintptr socketId) override;
 
     private:
-        view::IViewSPtr m_view;
+        view::ILoggerSPtr m_log;
 
         std::shared_ptr<conf::ConnectionDetails> m_conDet;
         std::shared_ptr<IConLisVec> m_conLis;

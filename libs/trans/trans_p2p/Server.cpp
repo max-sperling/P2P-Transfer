@@ -14,9 +14,9 @@ using namespace std;
 namespace trans::trans_p2p
 {
     // ***** Public ***************************************************************************************************
-    Server::Server(const view::IViewSPtr& view, const shared_ptr<conf::ConnectionDetails>& det, const shared_ptr<IConLisVec>& lis)
+    Server::Server(const view::ILoggerSPtr& log, const shared_ptr<conf::ConnectionDetails>& det, const shared_ptr<IConLisVec>& lis)
     {
-        m_view = view;
+        m_log = log;
         m_conDet = det;
         m_conLis = lis;
     }
@@ -32,7 +32,7 @@ namespace trans::trans_p2p
     // ***** Protected ************************************************************************************************
     void Server::incomingConnection(qintptr socketId)
     {
-        auto* input = new Input(m_view, m_conDet, m_conLis, socketId);
+        auto* input = new Input(m_log, m_conDet, m_conLis, socketId);
         connect(input, SIGNAL(finished()), input, SLOT(deleteLater()));
         input->start();
     }

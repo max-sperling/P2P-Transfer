@@ -10,16 +10,17 @@ using namespace std;
 
 namespace trans::trans_p2p
 {
-    bool TransP2P::exec(const view::IViewSPtr& view, const conf::IConDetSPtr& conDet)
+    // ***** Public ***************************************************************************************************
+    bool TransP2P::exec(const view::ILoggerSPtr& logger, const conf::IConDetSPtr& conDet)
     {
         m_conLis = make_shared<IConLisVec>();
 
-        m_client = make_unique<Client>(view, conDet, m_conLis);
+        m_client = make_unique<Client>(logger, conDet, m_conLis);
 
-        m_server = make_unique<Server>(view, conDet, m_conLis);
+        m_server = make_unique<Server>(logger, conDet, m_conLis);
         if (!m_server->init())
         {
-            view->logIt("Can't initialize server");
+            logger->logIt("Can't initialize server");
             return false;
         }
 
@@ -51,4 +52,10 @@ namespace trans::trans_p2p
 
         return true;
     }
+
+    void TransP2P::onSendTriggered(const vector<string>& items)
+    {
+        m_client->sendFiles(items);
+    }
+    // ****************************************************************************************************************
 }

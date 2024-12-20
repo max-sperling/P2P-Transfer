@@ -12,7 +12,7 @@
 namespace conf::conf_json
 {
     // ***** Public ***************************************************************************************************
-    bool ConfJson::read(const view::IViewSPtr& view, const std::filesystem::path& configPath, ConnectionDetails& conDetails)
+    bool ConfJson::read(const view::ILoggerSPtr& logger, const std::filesystem::path& configPath, ConnectionDetails& conDetails)
     {
         try
         {
@@ -25,7 +25,7 @@ namespace conf::conf_json
         }
         catch (const std::exception& e)
         {
-            view->logIt(e.what());
+            logger->logIt(e.what());
             return false;
         }
 

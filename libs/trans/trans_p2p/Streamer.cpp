@@ -27,7 +27,7 @@ namespace
     {
         auto* clientData = static_cast<trans::trans_p2p::ClientData*>(client_data);
 
-        clientData->m_view->logIt(clientData->m_logIdent + " Send packet with " + std::to_string(length) + " bytes");
+        clientData->m_logger->logIt(clientData->m_logIdent + " Send packet with " + std::to_string(length) + " bytes");
 
         clientData->m_socket->write(static_cast<const char*>(buff), length);
         clientData->m_socket->flush();
@@ -43,11 +43,11 @@ namespace
 
 namespace trans::trans_p2p
 {
-    ClientData::ClientData(view::IViewSPtr view, const std::string& logIdent, QTcpSocket* socket)
-        : m_view(view), m_logIdent(logIdent), m_socket(socket) {}
+    ClientData::ClientData(const view::ILoggerSPtr& logger, const std::string& logIdent, QTcpSocket* socket)
+        : m_logger(logger), m_logIdent(logIdent), m_socket(socket) {}
 
-    Streamer::Streamer(view::IViewSPtr view, const std::string& logIdent, QTcpSocket* socket)
-        : m_view(view), m_logIdent(logIdent), m_clientData({view, logIdent, socket}), m_archive(nullptr) {}
+    Streamer::Streamer(const view::ILoggerSPtr& logger, const std::string& logIdent, QTcpSocket* socket)
+        : m_clientData({logger, logIdent, socket}), m_archive(nullptr) {}
 
     bool Streamer::streamItems(std::vector<std::string>& items)
     {

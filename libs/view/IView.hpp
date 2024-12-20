@@ -10,17 +10,23 @@
 
 namespace view
 {
-    class IView
+    class ILogger
     {
     public:
-        virtual ~IView() = default;
-
-        virtual bool exec() = 0;
+        virtual ~ILogger() = default;
 
         /**
          * @param[in] msg ... Log message
          */
         virtual void logIt(const std::string& msg) = 0;
+    };
+
+    class IView : public ILogger
+    {
+    public:
+        virtual ~IView() = default;
+
+        virtual bool exec() = 0;
 
         /**
          * @param[in] lis ... View listener

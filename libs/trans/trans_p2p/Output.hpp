@@ -20,7 +20,7 @@ namespace trans::trans_p2p
         Q_OBJECT
 
     public:
-        Output(const view::IViewSPtr& view, const std::shared_ptr<conf::ConnectionDetails>& det,
+        Output(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det,
                const std::shared_ptr<IConLisVec>& lis, const std::vector<std::string>& items);
         ~Output() override;
 
@@ -32,7 +32,7 @@ namespace trans::trans_p2p
         bool connectToServer();
         bool disconnectFromServer();
 
-        view::IViewSPtr m_view;
+        view::ILoggerSPtr m_logger;
 
         std::shared_ptr<conf::ConnectionDetails> m_conDet;
         std::shared_ptr<IConLisVec> m_conLis;

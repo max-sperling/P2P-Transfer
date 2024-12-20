@@ -5,20 +5,20 @@
 
 #include "conf/IConfFwd.hpp"
 #include "trans/ITransFwd.hpp"
-#include "view/IViewFwd.hpp"
+#include "view/IView.hpp"
 
 namespace trans
 {
-    class ITrans
+    class ITrans : public view::IViewListener
     {
     public:
         virtual ~ITrans() = default;
 
         /**
-         * @param[in] view   ... View
+         * @param[in] logger ... Logger
          * @param[in] conDet ... Connection details
          */
-        virtual bool exec(const view::IViewSPtr& view, const conf::IConDetSPtr& conDet) = 0;
+        virtual bool exec(const view::ILoggerSPtr& logger, const conf::IConDetSPtr& conDet) = 0;
 
         /**
          * @param[in] lis ... Connection listener

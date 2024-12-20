@@ -11,7 +11,7 @@ namespace conf::conf_json
     {
     public:
         // --- IConf ------------------------------------------------------------------------------
-        bool read(const view::IViewSPtr& view, const std::filesystem::path& configPath, ConnectionDetails& conDetails) override;
+        bool read(const view::ILoggerSPtr& logger, const std::filesystem::path& configPath, ConnectionDetails& conDetails) override;
         // ----------------------------------------------------------------------------------------
     };
 }

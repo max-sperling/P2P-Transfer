@@ -15,13 +15,13 @@ using namespace std;
 
 namespace
 {
-    bool openFile(QFile& file, const QFlags<QIODevice::OpenMode::enum_type> mode, const view::IViewSPtr& view, const std::string& logIdent)
+    bool openFile(QFile& file, const QFlags<QIODevice::OpenMode::enum_type> mode, const view::ILoggerSPtr& logger, const std::string& logIdent)
     {
         bool isOpen = file.open(mode);
 
         if (!isOpen)
         {
-            view->logIt(logIdent + " Can't open file " + file.fileName().toStdString());
+            logger->logIt(logIdent + " Can't open file " + file.fileName().toStdString());
             return false;
         }
 
@@ -32,10 +32,10 @@ namespace
 namespace trans::trans_p2p
 {
     // ***** Public ***************************************************************************************************
-    Input::Input(const view::IViewSPtr& view, const shared_ptr<conf::ConnectionDetails>& det,
+    Input::Input(const view::ILoggerSPtr& log, const shared_ptr<conf::ConnectionDetails>& det,
                  const shared_ptr<IConLisVec>& lis, qintptr socketId)
     {
-        m_view = view;
+        m_logger = log;
         m_conDet = det;
         m_conLis = lis;
         m_logIdent = "[Server][" + to_string(socketId) + "]";
@@ -61,14 +61,14 @@ namespace trans::trans_p2p
 
         if (!m_socket->setSocketDescriptor(m_socketId))
         {
-            m_view->logIt(m_logIdent + " Can't setup socket");
+            m_logger->logIt(m_logIdent + " Can't setup socket");
             return;
         }
 
         connect(m_socket, SIGNAL(readyRead()), this, SLOT(onReceivedData()));
         connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 
-        m_view->logIt(m_logIdent + " Connected");
+        m_logger->logIt(m_logIdent + " Connected");
 
         exec();
     }
@@ -88,13 +88,13 @@ namespace trans::trans_p2p
 
             {
                 constexpr QFlags mode = QIODevice::WriteOnly;
-                if (!openFile(file, mode, m_view, m_logIdent)) { return; }
+                if (!openFile(file, mode, m_logger, m_logIdent)) { return; }
             }
 
             file.resize(0);
             file.close();
 
-            m_view->logIt(m_logIdent + " Created file: " + m_fileName);
+            m_logger->logIt(m_logIdent + " Created file: " + m_fileName);
         }
 
         if (!m_fileName.empty() && m_socket->bytesAvailable())
@@ -104,14 +104,14 @@ namespace trans::trans_p2p
 
             {
                 constexpr QFlags mode = (QIODevice::WriteOnly | QIODevice::Append);
-                if (!openFile(file, mode, m_view, m_logIdent)) { return; }
+                if (!openFile(file, mode, m_logger, m_logIdent)) { return; }
             }
 
             while (m_socket->bytesAvailable())
             {
                 QByteArray content = m_socket->readAll();
 
-                m_view->logIt(m_logIdent + " Received data for file: " + m_fileName + ", Content size: " + std::to_string(content.size()));
+                m_logger->logIt(m_logIdent + " Received data for file: " + m_fileName + ", Content size: " + std::to_string(content.size()));
 
                 file.write(content);
             }
@@ -122,7 +122,7 @@ namespace trans::trans_p2p
 
     void Input::onDisconnected()
     {
-        m_view->logIt(m_logIdent + " Disconnected");
+        m_logger->logIt(m_logIdent + " Disconnected");
 
         m_fileName = "";
         m_socket->close();

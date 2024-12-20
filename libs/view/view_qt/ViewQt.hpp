@@ -23,9 +23,12 @@ namespace view::view_qt
 
         // --- IView -----------------------------------
         bool exec() override;
-        void logIt(const std::string& msg) override;
         bool attach(IViewListener* lis) override;
         bool detach(IViewListener* lis) override;
+        // ---------------------------------------------
+
+        // --- ILogger ---------------------------------
+        void logIt(const std::string& msg) override;
         // ---------------------------------------------
 
     private:

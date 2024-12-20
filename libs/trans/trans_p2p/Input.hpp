@@ -20,7 +20,7 @@ namespace trans::trans_p2p
         Q_OBJECT
 
     public:
-        Input(const view::IViewSPtr& view, const std::shared_ptr<conf::ConnectionDetails>& det,
+        Input(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det,
               const std::shared_ptr<IConLisVec>& lis, qintptr socketId);
         ~Input() override;
 
@@ -28,7 +28,7 @@ namespace trans::trans_p2p
         void run() override;
 
     private:
-        view::IViewSPtr m_view;
+        view::ILoggerSPtr m_logger;
         std::string m_logIdent;
 
         std::shared_ptr<conf::ConnectionDetails> m_conDet;

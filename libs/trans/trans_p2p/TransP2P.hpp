@@ -16,9 +16,13 @@ namespace trans::trans_p2p
     {
     public:
         // --- ITrans ----------------------------
-        bool exec(const view::IViewSPtr& view, const conf::IConDetSPtr& conDet) override;
+        bool exec(const view::ILoggerSPtr& logger, const conf::IConDetSPtr& conDet) override;
         bool attach(IConnectionListener* lis) override;
         bool detach(IConnectionListener* lis) override;
+        // ---------------------------------------
+
+        // --- IViewListener ---------------------
+        void onSendTriggered(const std::vector<std::string>& items) override;
         // ---------------------------------------
 
     private:

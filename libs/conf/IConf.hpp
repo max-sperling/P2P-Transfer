@@ -17,11 +17,11 @@ namespace conf
         virtual ~IConf() = default;
 
         /**
-         * @param[in]  view       ... View for logging
+         * @param[in]  logger     ... Logger
          * @param[in]  configPath ... Path to the config
          * @param[out] conDetails ... Connection details
          */
-        virtual bool read(const view::IViewSPtr& view, const std::filesystem::path& configPath, ConnectionDetails& conDetails) = 0;
+        virtual bool read(const view::ILoggerSPtr& logger, const std::filesystem::path& configPath, ConnectionDetails& conDetails) = 0;
     };
 
     struct ConnectionDetails
