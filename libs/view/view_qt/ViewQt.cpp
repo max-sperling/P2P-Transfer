@@ -43,18 +43,32 @@ namespace view::view_qt
         return true;
     }
 
-    bool ViewQt::attach(IViewListener* lis)
+    bool ViewQt::attach(const IViewLisWPtr& lis)
     {
-        auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
+        auto iter = find_if(m_viewLis.begin(), m_viewLis.end(), [&lis](const auto& item)
+        {
+            if (auto lockedItem = item.lock())
+            {
+                if (lockedItem == lis.lock()) { return true; }
+            }
+            return false;
+        });
         if (iter != m_viewLis.end()) { return false; }
         m_viewLis.push_back(lis);
 
         return true;
     }
 
-    bool ViewQt::detach(IViewListener* lis)
+    bool ViewQt::detach(const IViewLisWPtr& lis)
     {
-        auto iter = std::find(m_viewLis.begin(), m_viewLis.end(), lis);
+        auto iter = find_if(m_viewLis.begin(), m_viewLis.end(), [&lis](const auto& item)
+        {
+            if (auto lockedItem = item.lock())
+            {
+                if (lockedItem == lis.lock()) { return true; }
+            }
+            return false;
+        });
         if (iter == m_viewLis.end()) { return false; }
         m_viewLis.erase(iter);
 
@@ -77,9 +91,12 @@ namespace view::view_qt
         std::vector<std::string> selectedItems = dialog.selectedItems();
         if (selectedItems.empty()) { return; }
 
-        for (IViewListener* lis : m_viewLis)
+        for (const IViewLisWPtr& item : m_viewLis)
         {
-            lis->onSendTriggered(selectedItems);
+            if (auto lockedItem = item.lock())
+            {
+                lockedItem->onSendTriggered(selectedItems);
+            }
         }
     }
     // ****************************************************************************************************************

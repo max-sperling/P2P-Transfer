@@ -23,8 +23,8 @@ namespace view::view_qt
 
         // --- IView -----------------------------------
         bool exec() override;
-        bool attach(IViewListener* lis) override;
-        bool detach(IViewListener* lis) override;
+        bool attach(const IViewLisWPtr& lis) override;
+        bool detach(const IViewLisWPtr& lis) override;
         // ---------------------------------------------
 
         // --- ILogger ---------------------------------
@@ -37,7 +37,7 @@ namespace view::view_qt
         QListWidget* m_lstLog;
         QPushButton* m_btnSend;
 
-        std::vector<IViewListener*> m_viewLis;
+        IViewLisVec m_viewLis;
 
         private slots:
             void onSendClicked();

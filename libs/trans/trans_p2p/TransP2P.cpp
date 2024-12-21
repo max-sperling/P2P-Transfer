@@ -13,11 +13,9 @@ namespace trans::trans_p2p
     // ***** Public ***************************************************************************************************
     bool TransP2P::exec(const view::ILoggerSPtr& logger, const conf::IConDetSPtr& conDet)
     {
-        m_conLis = make_shared<IConLisVec>();
+        m_client = make_unique<Client>(logger, conDet);
 
-        m_client = make_unique<Client>(logger, conDet, m_conLis);
-
-        m_server = make_unique<Server>(logger, conDet, m_conLis);
+        m_server = make_unique<Server>(logger, conDet, m_serLis);
         if (!m_server->init())
         {
             logger->logIt("Can't initialize server");
@@ -27,28 +25,26 @@ namespace trans::trans_p2p
         return true;
     }
 
-    bool TransP2P::attach(IConnectionListener* lis)
+    bool TransP2P::attach(IServerListener& lis)
     {
-        if (m_conLis)
+        auto iter = find_if(m_serLis.begin(), m_serLis.end(), [&lis](const auto& item)
         {
-            auto iter = find(m_conLis->begin(), m_conLis->end(), lis);
-            if (iter != m_conLis->end()) return false;
-
-            m_conLis->push_back(lis);
-        }
+            return &item.get() == &lis;
+        });
+        if (iter != m_serLis.end()) { return false; }
+        m_serLis.push_back(std::ref(lis));
 
         return true;
     }
 
-    bool TransP2P::detach(IConnectionListener* lis)
+    bool TransP2P::detach(IServerListener& lis)
     {
-        if (m_conLis)
+        auto iter = find_if(m_serLis.begin(), m_serLis.end(), [&lis](const auto& item)
         {
-            auto iter = find(m_conLis->begin(), m_conLis->end(), lis);
-            if (iter == m_conLis->end()) return false;
-
-            m_conLis->erase(iter);
-        }
+            return &item.get() == &lis;
+        });
+        if (iter == m_serLis.end()) { return false; }
+        m_serLis.erase(iter);
 
         return true;
     }

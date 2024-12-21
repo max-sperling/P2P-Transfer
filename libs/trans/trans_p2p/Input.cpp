@@ -33,11 +33,11 @@ namespace trans::trans_p2p
 {
     // ***** Public ***************************************************************************************************
     Input::Input(const view::ILoggerSPtr& log, const shared_ptr<conf::ConnectionDetails>& det,
-                 const shared_ptr<IConLisVec>& lis, qintptr socketId)
+                 ISerLisVec& lis, qintptr socketId)
+    : m_serLis(lis)
     {
         m_logger = log;
         m_conDet = det;
-        m_conLis = lis;
         m_logIdent = "[Server][" + to_string(socketId) + "]";
         m_socket = nullptr;
         m_socketId = socketId;
@@ -46,9 +46,9 @@ namespace trans::trans_p2p
 
     Input::~Input()
     {
-        for (IConnectionListener* lis : *m_conLis)
+        for (IServerListener& lis : m_serLis)
         {
-            lis->onConnectionFinished(m_socketId, IConnectionListener::ConnectionType::INCOMING);
+            lis.onConnectionFinished(m_socketId, m_fileName);
         }
     }
     // ****************************************************************************************************************
@@ -83,6 +83,12 @@ namespace trans::trans_p2p
 
             const auto curTime = std::chrono::system_clock::now();
             m_fileName = std::format("{:%Y-%m-%d %H:%M:%S}", curTime) + ".zip";
+
+            for (IServerListener& lis : m_serLis)
+            {
+                lis.onFirstDataReceived(m_socketId, m_fileName);
+            }
+
             string filePath = m_conDet->m_dir + "/" + m_fileName;
             QFile file(QString::fromStdString(filePath));
 
@@ -124,7 +130,6 @@ namespace trans::trans_p2p
     {
         m_logger->logIt(m_logIdent + " Disconnected");
 
-        m_fileName = "";
         m_socket->close();
         quit();
     }

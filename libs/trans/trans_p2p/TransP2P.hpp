@@ -17,8 +17,8 @@ namespace trans::trans_p2p
     public:
         // --- ITrans ----------------------------
         bool exec(const view::ILoggerSPtr& logger, const conf::IConDetSPtr& conDet) override;
-        bool attach(IConnectionListener* lis) override;
-        bool detach(IConnectionListener* lis) override;
+        bool attach(IServerListener& lis) override;
+        bool detach(IServerListener& lis) override;
         // ---------------------------------------
 
         // --- IViewListener ---------------------
@@ -26,7 +26,7 @@ namespace trans::trans_p2p
         // ---------------------------------------
 
     private:
-        std::shared_ptr<IConLisVec> m_conLis;
+        ISerLisVec m_serLis;
 
         std::unique_ptr<Server> m_server;
         std::unique_ptr<Client> m_client;

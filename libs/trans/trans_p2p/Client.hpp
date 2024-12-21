@@ -23,9 +23,8 @@ namespace trans::trans_p2p
         /**
          * @param[in] log ... Logger
          * @param[in] det ... Connection details
-         * @param[in] lis ... Connection listener
          */
-        Client(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det, const std::shared_ptr<IConLisVec>& lis);
+        Client(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det);
         ~Client() override;
 
         /**
@@ -35,8 +34,6 @@ namespace trans::trans_p2p
 
     private:
         view::ILoggerSPtr m_logger;
-
         std::shared_ptr<conf::ConnectionDetails> m_conDet;
-        std::shared_ptr<IConLisVec> m_conLis;
     };
 }

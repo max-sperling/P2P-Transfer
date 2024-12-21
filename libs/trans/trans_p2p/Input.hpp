@@ -21,7 +21,7 @@ namespace trans::trans_p2p
 
     public:
         Input(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det,
-              const std::shared_ptr<IConLisVec>& lis, qintptr socketId);
+              ISerLisVec& lis, qintptr socketId);
         ~Input() override;
 
     protected:
@@ -32,7 +32,7 @@ namespace trans::trans_p2p
         std::string m_logIdent;
 
         std::shared_ptr<conf::ConnectionDetails> m_conDet;
-        std::shared_ptr<IConLisVec> m_conLis;
+        ISerLisVec& m_serLis;
 
         QTcpSocket* m_socket;
         qintptr m_socketId;

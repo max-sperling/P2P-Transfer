@@ -20,9 +20,8 @@ namespace trans::trans_p2p
         Q_OBJECT
 
     public:
-        Output(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det,
-               const std::shared_ptr<IConLisVec>& lis, const std::vector<std::string>& items);
-        ~Output() override;
+        Output(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det, const std::vector<std::string>& items);
+        ~Output() override = default;
 
     protected:
         void run() override;
@@ -35,7 +34,6 @@ namespace trans::trans_p2p
         view::ILoggerSPtr m_logger;
 
         std::shared_ptr<conf::ConnectionDetails> m_conDet;
-        std::shared_ptr<IConLisVec> m_conLis;
 
         std::vector<std::string> m_items;
         std::string m_logIdent;

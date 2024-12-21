@@ -4,6 +4,7 @@
 /************************/
 
 #include <memory>
+#include <vector>
 
 namespace view
 {
@@ -15,4 +16,6 @@ namespace view
 
     typedef std::shared_ptr<IView> IViewSPtr;
     typedef std::shared_ptr<ILogger> ILoggerSPtr;
+    typedef std::weak_ptr<IViewListener> IViewLisWPtr;
+    typedef std::vector<IViewLisWPtr> IViewLisVec;
 }

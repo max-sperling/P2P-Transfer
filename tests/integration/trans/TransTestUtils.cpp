@@ -13,35 +13,16 @@ using namespace std;
 
 namespace trans
 {
-    bool checkZipFileExistance(const filesystem::path& outputPath, string& zipFileName)
-    {
-        zipFileName.clear();
-
-        for (const auto& entry : filesystem::directory_iterator(outputPath))
-        {
-            if (entry.path().extension() == ".zip")
-            {
-                if (!zipFileName.empty())
-                {
-                    cerr << "More than one zip file found in the folder." << endl;
-                    return false;
-                }
-                zipFileName = entry.path().string();
-            }
-        }
-        if (zipFileName.empty())
-        {
-            cerr << "No zip file found in the folder." << endl;
-            return false;
-        }
-
-        return true;
-    }
-
-    bool checkZipFileContent(const string& zipFileName, string& fileName, string& fileContent)
+    bool checkZipFile(const std::filesystem::path& zipFilePath, std::string& fileName, std::string& fileContent)
     {
         fileName.clear();
         fileContent.clear();
+
+        if (!std::filesystem::exists(zipFilePath))
+        {
+            cerr << "The provided zip file path does not exist" << endl;
+            return false;
+        }
 
         archive* archive = archive_read_new();
         if (!archive)
@@ -52,7 +33,7 @@ namespace trans
 
         archive_read_support_format_zip(archive);
 
-        if (archive_read_open_filename(archive, zipFileName.c_str(), 10240) != ARCHIVE_OK)
+        if (archive_read_open_filename(archive, zipFilePath.c_str(), 10240) != ARCHIVE_OK)
         {
             cerr << "Can't open the zip archive for reading." << endl;
             return false;

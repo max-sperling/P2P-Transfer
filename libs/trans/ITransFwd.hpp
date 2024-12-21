@@ -11,8 +11,8 @@ namespace trans
     enum TransType { P2P };
 
     class ITrans;
-    class IConnectionListener;
+    class IServerListener;
 
     typedef std::shared_ptr<ITrans> ITransSPtr;
-    typedef std::vector<IConnectionListener*> IConLisVec;
+    typedef std::vector<std::reference_wrapper<IServerListener>> ISerLisVec;
 }

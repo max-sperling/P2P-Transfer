@@ -21,33 +21,31 @@ namespace trans
         virtual bool exec(const view::ILoggerSPtr& logger, const conf::IConDetSPtr& conDet) = 0;
 
         /**
-         * @param[in] lis ... Connection listener
+         * @param[in] lis ... Server listener
          */
-        virtual bool attach(IConnectionListener *lis) = 0;
+        virtual bool attach(IServerListener& lis) = 0;
 
         /**
-         * @param[in] lis ... Connection listener
+         * @param[in] lis ... Server listener
          */
-        virtual bool detach(IConnectionListener *lis) = 0;
+        virtual bool detach(IServerListener& lis) = 0;
     };
 
-    class IConnectionListener
+    class IServerListener
     {
     public:
-        virtual ~IConnectionListener() = default;
-
-        enum ConnectionType { OUTGOING, INCOMING };
+        virtual ~IServerListener() = default;
 
         /**
          * @param[in] socketId ... Socket id
-         * @param[in] type ... Connection type
+         * @param[in] fileName ... Name of the zip file
          */
-        virtual void onConnectionStarted(long long socketId, ConnectionType type) = 0;
+        virtual void onFirstDataReceived(long long socketId, const std::string& fileName) = 0;
 
         /**
          * @param[in] socketId ... Socket id
-         * @param[in] type ... Connection type
+         * @param[in] fileName ... Name of the zip file
          */
-        virtual void onConnectionFinished(long long socketId, ConnectionType type) = 0;
+        virtual void onConnectionFinished(long long socketId, const std::string& fileName) = 0;
     };
 }

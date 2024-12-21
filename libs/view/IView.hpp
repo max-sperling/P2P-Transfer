@@ -31,12 +31,12 @@ namespace view
         /**
          * @param[in] lis ... View listener
          */
-        virtual bool attach(IViewListener* lis) = 0;
+        virtual bool attach(const IViewLisWPtr& lis) = 0;
 
         /**
          * @param[in] lis ... View listener
          */
-        virtual bool detach(IViewListener* lis) = 0;
+        virtual bool detach(const IViewLisWPtr& lis) = 0;
     };
 
     class IViewListener

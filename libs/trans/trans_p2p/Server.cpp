@@ -14,11 +14,11 @@ using namespace std;
 namespace trans::trans_p2p
 {
     // ***** Public ***************************************************************************************************
-    Server::Server(const view::ILoggerSPtr& log, const shared_ptr<conf::ConnectionDetails>& det, const shared_ptr<IConLisVec>& lis)
+    Server::Server(const view::ILoggerSPtr& log, const shared_ptr<conf::ConnectionDetails>& det, ISerLisVec& lis)
+    : m_serLis(lis)
     {
-        m_log = log;
+        m_logger = log;
         m_conDet = det;
-        m_conLis = lis;
     }
 
     bool Server::init()
@@ -32,7 +32,7 @@ namespace trans::trans_p2p
     // ***** Protected ************************************************************************************************
     void Server::incomingConnection(qintptr socketId)
     {
-        auto* input = new Input(m_log, m_conDet, m_conLis, socketId);
+        auto* input = new Input(m_logger, m_conDet, m_serLis, socketId);
         connect(input, SIGNAL(finished()), input, SLOT(deleteLater()));
         input->start();
     }

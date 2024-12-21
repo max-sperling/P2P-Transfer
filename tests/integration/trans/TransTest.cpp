@@ -5,7 +5,7 @@
 #include "trans/TransTest.hpp"
 
 #include "conf/IConf.hpp"
-#include "trans/TestConLis.hpp"
+#include "trans/TestSerLis.hpp"
 #include "trans/TransFactory.hpp"
 #include "trans/TransTestUtils.hpp"
 #include "trans/ITrans.hpp"
@@ -61,17 +61,17 @@ namespace trans
         vector<string> testFilePaths{testInputFilePath};
         QTimer::singleShot(0, [&trans, &testFilePaths]() { trans->onSendTriggered(testFilePaths); });
 
-        TestConLis conLis(app);
-        trans->attach(&conLis);
-        app.exec();
-        trans->detach(&conLis);
-
         string zipFileName;
-        ASSERT_TRUE(checkZipFileExistance(testOutputPath, zipFileName));
+        TestSerLis serLis(app, zipFileName);
 
+        trans->attach(serLis);
+        app.exec();
+        trans->detach(serLis);
+
+        filesystem::path zipFilePath = testOutputPath / zipFileName;
         string destFileName;
         string destFileContent;
-        ASSERT_TRUE(checkZipFileContent(zipFileName, destFileName, destFileContent));
+        ASSERT_TRUE(checkZipFile(zipFilePath, destFileName, destFileContent));
 
         EXPECT_EQ(destFileName, origFileName);
         EXPECT_EQ(destFileContent, origFileContent);

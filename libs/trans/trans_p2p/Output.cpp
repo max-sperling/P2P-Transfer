@@ -14,24 +14,14 @@ using namespace std;
 namespace trans::trans_p2p
 {
     // ***** Public ***************************************************************************************************
-    Output::Output(const view::ILoggerSPtr& log, const shared_ptr<conf::ConnectionDetails>& det,
-                   const shared_ptr<IConLisVec>& lis, const vector<string>& items)
+    Output::Output(const view::ILoggerSPtr& log, const shared_ptr<conf::ConnectionDetails>& det, const vector<string>& items)
     {
         m_logger = log;
         m_conDet = det;
-        m_conLis = lis;
         m_items = items;
         m_logIdent = "[Client]";
         m_socket = nullptr;
         m_socketId = 0;
-    }
-
-    Output::~Output()
-    {
-        for (IConnectionListener* lis : *m_conLis)
-        {
-            lis->onConnectionFinished(m_socketId, IConnectionListener::ConnectionType::OUTGOING);
-        }
     }
     // ****************************************************************************************************************
 

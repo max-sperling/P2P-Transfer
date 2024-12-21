@@ -31,9 +31,9 @@ int main(int argc, char *argv[])
     if (!conf->read(view, confPath, *conDet)) { view->logIt("Reading config failed"); }
     if (!trans->exec(view, conDet)) { view->logIt("Setup transport failed"); }
 
-    view->attach(&*trans);
+    view->attach(trans);
     app.exec();
-    view->detach(&*trans);
+    view->detach(trans);
 
     return 0;
 }
