@@ -17,8 +17,8 @@ namespace trans::trans_p2p
     public:
         // --- ITrans ----------------------------
         bool exec(const view::ILoggerSPtr& logger, const conf::IConDetSPtr& conDet) override;
-        bool attach(IServerListener& lis) override;
-        bool detach(IServerListener& lis) override;
+        bool attach(const ISerLisWPtr& lis) override;
+        bool detach(const ISerLisWPtr& lis) override;
         // ---------------------------------------
 
         // --- IViewListener ---------------------

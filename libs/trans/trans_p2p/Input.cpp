@@ -46,10 +46,16 @@ namespace trans::trans_p2p
 
     Input::~Input()
     {
-        for (IServerListener& lis : m_serLis)
+        for (auto& lis : m_serLis)
         {
-            lis.onConnectionFinished(m_socketId, m_fileName);
+            auto lockedLis = lis.lock();
+            if (lockedLis)
+            {
+                lockedLis->onConnectionFinished(m_socketId, m_fileName);
+            }
         }
+
+        if (m_socket) { delete m_socket; m_socket = nullptr; }
     }
     // ****************************************************************************************************************
 
@@ -84,9 +90,13 @@ namespace trans::trans_p2p
             const auto curTime = std::chrono::system_clock::now();
             m_fileName = std::format("{:%Y-%m-%d %H:%M:%S}", curTime) + ".zip";
 
-            for (IServerListener& lis : m_serLis)
+            for (auto& lis : m_serLis)
             {
-                lis.onFirstDataReceived(m_socketId, m_fileName);
+                auto lockedLis = lis.lock();
+                if (lockedLis)
+                {
+                    lockedLis->onFirstDataReceived(m_socketId, m_fileName);
+                }
             }
 
             string filePath = m_conDet->m_dir + "/" + m_fileName;

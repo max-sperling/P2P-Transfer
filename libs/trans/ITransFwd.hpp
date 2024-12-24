@@ -14,5 +14,6 @@ namespace trans
     class IServerListener;
 
     typedef std::shared_ptr<ITrans> ITransSPtr;
-    typedef std::vector<std::reference_wrapper<IServerListener>> ISerLisVec;
+    typedef std::weak_ptr<IServerListener> ISerLisWPtr;
+    typedef std::vector<ISerLisWPtr> ISerLisVec;
 }

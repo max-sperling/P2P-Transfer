@@ -51,6 +51,7 @@ namespace trans
         int argc = 0;
         char** argv = nullptr;
         QCoreApplication app(argc, argv);
+        string zipFileName;
 
         ITransSPtr trans = TransFactory::create(TransType::P2P);
 
@@ -61,9 +62,8 @@ namespace trans
         vector<string> testFilePaths{testInputFilePath};
         QTimer::singleShot(0, [&trans, &testFilePaths]() { trans->onSendTriggered(testFilePaths); });
 
-        string zipFileName;
-        TestSerLis serLis(app, zipFileName);
-
+        
+        auto serLis = make_shared<TestSerLis>(app, zipFileName);
         trans->attach(serLis);
         app.exec();
         trans->detach(serLis);

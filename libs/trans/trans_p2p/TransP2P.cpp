@@ -25,27 +25,41 @@ namespace trans::trans_p2p
         return true;
     }
 
-    bool TransP2P::attach(IServerListener& lis)
+    bool TransP2P::attach(const ISerLisWPtr& lis)
     {
-        auto iter = find_if(m_serLis.begin(), m_serLis.end(), [&lis](const auto& item)
+        auto lockedLis = lis.lock();
+        if (!lockedLis) { return false; }
+
+        auto iter = find_if(m_serLis.begin(), m_serLis.end(), [&lockedLis](const auto& item)
         {
-            return &item.get() == &lis;
+            if (auto lockedItem = item.lock())
+            {
+                if (lockedItem == lockedLis) { return true; }
+            }
+            return false;
         });
         if (iter != m_serLis.end()) { return false; }
-        m_serLis.push_back(std::ref(lis));
 
+        m_serLis.push_back(lis);
         return true;
     }
 
-    bool TransP2P::detach(IServerListener& lis)
+    bool TransP2P::detach(const ISerLisWPtr& lis)
     {
-        auto iter = find_if(m_serLis.begin(), m_serLis.end(), [&lis](const auto& item)
+        auto lockedLis = lis.lock();
+        if (!lockedLis) { return false; }
+
+        auto iter = find_if(m_serLis.begin(), m_serLis.end(), [&lockedLis](const auto& item)
         {
-            return &item.get() == &lis;
+            if (auto lockedItem = item.lock())
+            {
+                if (lockedItem == lockedLis) { return true; }
+            }
+            return false;
         });
         if (iter == m_serLis.end()) { return false; }
-        m_serLis.erase(iter);
 
+        m_serLis.erase(iter);
         return true;
     }
 

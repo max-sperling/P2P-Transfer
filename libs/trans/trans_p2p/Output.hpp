@@ -21,7 +21,7 @@ namespace trans::trans_p2p
 
     public:
         Output(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det, const std::vector<std::string>& items);
-        ~Output() override = default;
+        ~Output() override;
 
     protected:
         void run() override;

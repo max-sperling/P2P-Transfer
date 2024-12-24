@@ -23,12 +23,12 @@ namespace trans
         /**
          * @param[in] lis ... Server listener
          */
-        virtual bool attach(IServerListener& lis) = 0;
+        virtual bool attach(const ISerLisWPtr& lis) = 0;
 
         /**
          * @param[in] lis ... Server listener
          */
-        virtual bool detach(IServerListener& lis) = 0;
+        virtual bool detach(const ISerLisWPtr& lis) = 0;
     };
 
     class IServerListener
