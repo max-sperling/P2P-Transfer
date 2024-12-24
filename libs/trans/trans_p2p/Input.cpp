@@ -9,25 +9,8 @@
 #include "trans/ITrans.hpp"
 
 #include <QDir>
-#include <QFile>
 
 using namespace std;
-
-namespace
-{
-    bool openFile(QFile& file, const QFlags<QIODevice::OpenMode::enum_type> mode, const view::ILoggerSPtr& logger, const std::string& logIdent)
-    {
-        bool isOpen = file.open(mode);
-
-        if (!isOpen)
-        {
-            logger->logIt(logIdent + " Can't open file " + file.fileName().toStdString());
-            return false;
-        }
-
-        return true;
-    }
-}
 
 namespace trans::trans_p2p
 {
@@ -48,14 +31,8 @@ namespace trans::trans_p2p
     {
         for (auto& lis : m_serLis)
         {
-            auto lockedLis = lis.lock();
-            if (lockedLis)
-            {
-                lockedLis->onConnectionFinished(m_socketId, m_fileName);
-            }
+            if (auto lockedLis = lis.lock()) { lockedLis->onConnectionFinished(m_socketId, m_fileName); }
         }
-
-        if (m_socket) { delete m_socket; m_socket = nullptr; }
     }
     // ****************************************************************************************************************
 
@@ -80,59 +57,75 @@ namespace trans::trans_p2p
     }
     // ****************************************************************************************************************
 
+    // ***** Private **************************************************************************************************
+    bool Input::openFile(QFile& file, const QFlags<QIODevice::OpenMode::enum_type> mode)
+    {
+        bool isOpen = file.open(mode);
+
+        if (!isOpen)
+        {
+            m_logger->logIt(m_logIdent + " Can't open file " + file.fileName().toStdString());
+            return false;
+        }
+
+        return true;
+    }
+
+    void Input::createFile()
+    {
+        QDir().mkdir(QString::fromStdString(m_conDet->m_dir));
+
+        string filePath = m_conDet->m_dir + "/" + m_fileName;
+        QFile file(QString::fromStdString(filePath));
+
+        {
+            constexpr QFlags mode = QIODevice::WriteOnly;
+            if (!openFile(file, mode)) { return; }
+        }
+
+        m_logger->logIt(m_logIdent + " Created file: \"" + m_fileName + "\"");
+
+        file.resize(0);
+        file.close();
+
+    }
+
+    void Input::writeFile()
+    {
+        string filePath = m_conDet->m_dir + "/" + m_fileName;
+        QFile file(QString::fromStdString(filePath));
+
+        {
+            constexpr QFlags mode = (QIODevice::WriteOnly | QIODevice::Append);
+            if (!openFile(file, mode)) { return; }
+        }
+
+        QByteArray content = m_socket->readAll();
+        m_logger->logIt(m_logIdent + " Received data for file: \"" + m_fileName + "\", Content size: " + std::to_string(content.size()));
+
+        file.write(content);
+        file.close();
+    }
+    // ****************************************************************************************************************
+
     // ***** Slots ****************************************************************************************************
     void Input::onReceivedData()
     {
         if (m_fileName.empty())
         {
-            QDir().mkdir(QString::fromStdString(m_conDet->m_dir));
-
             const auto curTime = std::chrono::system_clock::now();
             m_fileName = std::format("{:%Y-%m-%d %H:%M:%S}", curTime) + ".zip";
+            createFile();
 
             for (auto& lis : m_serLis)
             {
-                auto lockedLis = lis.lock();
-                if (lockedLis)
-                {
-                    lockedLis->onFirstDataReceived(m_socketId, m_fileName);
-                }
+                if (auto lockedLis = lis.lock()) { lockedLis->onFirstDataReceived(m_socketId, m_fileName); }
             }
-
-            string filePath = m_conDet->m_dir + "/" + m_fileName;
-            QFile file(QString::fromStdString(filePath));
-
-            {
-                constexpr QFlags mode = QIODevice::WriteOnly;
-                if (!openFile(file, mode, m_logger, m_logIdent)) { return; }
-            }
-
-            file.resize(0);
-            file.close();
-
-            m_logger->logIt(m_logIdent + " Created file: " + m_fileName);
         }
 
         if (!m_fileName.empty() && m_socket->bytesAvailable())
         {
-            string filePath = m_conDet->m_dir + "/" + m_fileName;
-            QFile file(QString::fromStdString(filePath));
-
-            {
-                constexpr QFlags mode = (QIODevice::WriteOnly | QIODevice::Append);
-                if (!openFile(file, mode, m_logger, m_logIdent)) { return; }
-            }
-
-            while (m_socket->bytesAvailable())
-            {
-                QByteArray content = m_socket->readAll();
-
-                m_logger->logIt(m_logIdent + " Received data for file: " + m_fileName + ", Content size: " + std::to_string(content.size()));
-
-                file.write(content);
-            }
-
-            file.close();
+            writeFile();
         }
     }
 
@@ -141,6 +134,7 @@ namespace trans::trans_p2p
         m_logger->logIt(m_logIdent + " Disconnected");
 
         m_socket->close();
+        m_socket->deleteLater();
         quit();
     }
     // ****************************************************************************************************************

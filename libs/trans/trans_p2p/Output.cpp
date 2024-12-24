@@ -24,10 +24,7 @@ namespace trans::trans_p2p
         m_socketId = 0;
     }
 
-    Output::~Output()
-    {
-        if (m_socket) { delete m_socket; m_socket = nullptr; }
-    }
+    Output::~Output() {}
     // ****************************************************************************************************************
 
     // ***** Protected ************************************************************************************************
@@ -47,8 +44,7 @@ namespace trans::trans_p2p
     // ***** Private **************************************************************************************************
     bool Output::connectToServer()
     {
-        if (m_socket->state() == QTcpSocket::ConnectedState)
-            return true;
+        if (m_socket->state() == QTcpSocket::ConnectedState) { return true; }
 
         m_socket->connectToHost(QString::fromStdString(m_conDet->m_addr), m_conDet->m_port);
 
@@ -78,14 +74,16 @@ namespace trans::trans_p2p
 
     bool Output::sendItems()
     {
-        if (!connectToServer()) return false;
+        if (!connectToServer()) { return false; }
+
+        m_logger->logIt(m_logIdent + " Start sending files");
 
         Streamer streamer(m_logger, m_logIdent, m_socket);
         streamer.streamItems(m_items);
 
-        m_socket->waitForBytesWritten(-1);
+        m_logger->logIt(m_logIdent + " Finished sending files");
 
-        if (!disconnectFromServer()) return false;
+        if (!disconnectFromServer()) { return false; }
 
         return true;
     }
@@ -97,6 +95,7 @@ namespace trans::trans_p2p
         m_logger->logIt(m_logIdent + " Disconnected");
 
         m_socket->close();
+        m_socket->deleteLater();
         quit();
     }
     // ****************************************************************************************************************

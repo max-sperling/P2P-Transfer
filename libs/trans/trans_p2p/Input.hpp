@@ -7,6 +7,7 @@
 #include "trans/ITransFwd.hpp"
 #include "view/IView.hpp"
 
+#include <QFile>
 #include <QThread>
 #include <QTcpSocket>
 
@@ -28,6 +29,10 @@ namespace trans::trans_p2p
         void run() override;
 
     private:
+        bool openFile(QFile& file, const QFlags<QIODevice::OpenMode::enum_type> mode);
+        void createFile();
+        void writeFile();
+
         view::ILoggerSPtr m_logger;
         std::string m_logIdent;
 
