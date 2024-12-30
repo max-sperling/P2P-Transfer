@@ -32,9 +32,18 @@ namespace trans::trans_p2p
     // ***** Protected ************************************************************************************************
     void Server::incomingConnection(qintptr socketId)
     {
-        auto* input = new Input(m_logger, m_conDet, m_serLis, socketId);
+        QThread* thread = new QThread;
+        Input* input = new Input(m_logger, m_conDet, m_serLis, socketId);
+
+        input->moveToThread(thread);
+
+        connect(thread, SIGNAL(started()), input, SLOT(start()));
+        connect(input, SIGNAL(finished()), thread, SLOT(quit()));
+
         connect(input, SIGNAL(finished()), input, SLOT(deleteLater()));
-        input->start();
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+        thread->start();
     }
     // ****************************************************************************************************************
 }

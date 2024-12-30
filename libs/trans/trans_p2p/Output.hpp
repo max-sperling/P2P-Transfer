@@ -15,7 +15,7 @@
 
 namespace trans::trans_p2p
 {
-    class Output : public QThread
+    class Output : public QObject
     {
         Q_OBJECT
 
@@ -23,13 +23,14 @@ namespace trans::trans_p2p
         Output(const view::ILoggerSPtr& log, const std::shared_ptr<conf::ConnectionDetails>& det, const std::vector<std::string>& items);
         ~Output() override;
 
-    protected:
-        void run() override;
+    public slots:
+        void start();
 
     private:
         bool sendItems();
         bool connectToServer();
         bool disconnectFromServer();
+        void cleanupSocket();
 
         view::ILoggerSPtr m_logger;
 
@@ -43,5 +44,8 @@ namespace trans::trans_p2p
 
     private slots:
         void onDisconnected();
+
+    signals:
+        void finished();
     };
 }

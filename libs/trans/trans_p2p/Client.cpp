@@ -20,9 +20,18 @@ namespace trans::trans_p2p
 
     void Client::sendFiles(const vector<string>& items)
     {
-        auto* output = new Output(m_logger, m_conDet, items);
+        QThread* thread = new QThread;
+        Output* output = new Output(m_logger, m_conDet, items);
+
+        output->moveToThread(thread);
+
+        connect(thread, SIGNAL(started()), output, SLOT(start()));
+        connect(output, SIGNAL(finished()), thread, SLOT(quit()));
+
         connect(output, SIGNAL(finished()), output, SLOT(deleteLater()));
-        output->start();
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+        thread->start();
     }
     // ****************************************************************************************************************
 }

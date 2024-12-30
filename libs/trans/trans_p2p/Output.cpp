@@ -27,24 +27,49 @@ namespace trans::trans_p2p
     Output::~Output() {}
     // ****************************************************************************************************************
 
-    // ***** Protected ************************************************************************************************
-    void Output::run()
+    // ***** Public slots *********************************************************************************************
+    void Output::start()
     {
         m_socket = new QTcpSocket();
         // m_socket->setSocketOption(QAbstractSocket::SendBufferSizeSocketOption, QVariant::fromValue(max_packet_payload_size));
 
         connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 
-        if (!sendItems()) return;
+        if (!sendItems())
+        {
+            m_logger->logIt(m_logIdent + " Can't send files");
 
-        exec();
+            cleanupSocket();
+            emit finished();
+            return;
+        }
     }
     // ****************************************************************************************************************
 
     // ***** Private **************************************************************************************************
+    bool Output::sendItems()
+    {
+        if (!connectToServer()) { return false; }
+
+        m_logger->logIt(m_logIdent + " Start sending files");
+
+        Streamer streamer(m_logger, m_logIdent, m_socket);
+        streamer.streamItems(m_items);
+
+        m_logger->logIt(m_logIdent + " Finished sending files");
+
+        if (!disconnectFromServer()) { return false; }
+
+        return true;
+    }
+
     bool Output::connectToServer()
     {
-        if (m_socket->state() == QTcpSocket::ConnectedState) { return true; }
+        if (m_socket->state() == QTcpSocket::ConnectedState)
+        {
+            m_logger->logIt(m_logIdent + " Already connected");
+            return true;
+        }
 
         m_socket->connectToHost(QString::fromStdString(m_conDet->m_addr), m_conDet->m_port);
 
@@ -62,41 +87,42 @@ namespace trans::trans_p2p
 
     bool Output::disconnectFromServer()
     {
+        if (m_socket->state() == QTcpSocket::UnconnectedState)
+        {
+            m_logger->logIt(m_logIdent + " Already disconnected");
+            return true;
+        }
+
         m_socket->disconnectFromHost();
 
-        if (m_socket->state() != QAbstractSocket::UnconnectedState)
+        if (!m_socket->waitForDisconnected(2000))
         {
-            m_socket->waitForDisconnected(2000);
+            m_logger->logIt(m_logIdent + " Can't disconnect");
+            return false;
         }
+        m_logger->logIt(m_logIdent + " Disconnected");
 
         return true;
     }
 
-    bool Output::sendItems()
+    void Output::cleanupSocket()
     {
-        if (!connectToServer()) { return false; }
-
-        m_logger->logIt(m_logIdent + " Start sending files");
-
-        Streamer streamer(m_logger, m_logIdent, m_socket);
-        streamer.streamItems(m_items);
-
-        m_logger->logIt(m_logIdent + " Finished sending files");
-
-        if (!disconnectFromServer()) { return false; }
-
-        return true;
+        if (m_socket)
+        {
+            m_socket->close();
+            m_socket->deleteLater();
+            m_socket = nullptr;
+        }
     }
     // ****************************************************************************************************************
 
-    // ***** Private Slots ********************************************************************************************
+    // ***** Private slots ********************************************************************************************
     void Output::onDisconnected()
     {
         m_logger->logIt(m_logIdent + " Disconnected");
 
-        m_socket->close();
-        m_socket->deleteLater();
-        quit();
+        cleanupSocket();
+        emit finished();
     }
     // ****************************************************************************************************************
 }

@@ -36,8 +36,8 @@ namespace trans::trans_p2p
     }
     // ****************************************************************************************************************
 
-    // ***** Protected ************************************************************************************************
-    void Input::run()
+    // ***** Public slots *********************************************************************************************
+    void Input::start()
     {
         m_socket = new QTcpSocket();
         // m_socket->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, QVariant::fromValue(max_packet_payload_size));
@@ -45,15 +45,16 @@ namespace trans::trans_p2p
         if (!m_socket->setSocketDescriptor(m_socketId))
         {
             m_logger->logIt(m_logIdent + " Can't setup socket");
+
+            cleanupSocket();
+            emit finished();
             return;
         }
 
-        connect(m_socket, SIGNAL(readyRead()), this, SLOT(onReceivedData()));
+        connect(m_socket, SIGNAL(readyRead()), this, SLOT(onDataReceived()));
         connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 
         m_logger->logIt(m_logIdent + " Connected");
-
-        exec();
     }
     // ****************************************************************************************************************
 
@@ -106,10 +107,20 @@ namespace trans::trans_p2p
         file.write(content);
         file.close();
     }
+
+    void Input::cleanupSocket()
+    {
+        if (m_socket)
+        {
+            m_socket->close();
+            m_socket->deleteLater();
+            m_socket = nullptr;
+        }
+    }
     // ****************************************************************************************************************
 
-    // ***** Slots ****************************************************************************************************
-    void Input::onReceivedData()
+    // ***** Private slots ********************************************************************************************
+    void Input::onDataReceived()
     {
         if (m_fileName.empty())
         {
@@ -133,9 +144,8 @@ namespace trans::trans_p2p
     {
         m_logger->logIt(m_logIdent + " Disconnected");
 
-        m_socket->close();
-        m_socket->deleteLater();
-        quit();
+        cleanupSocket();
+        emit finished();
     }
     // ****************************************************************************************************************
 }

@@ -16,7 +16,7 @@
 
 namespace trans::trans_p2p
 {
-    class Input : public QThread
+    class Input : public QObject
     {
         Q_OBJECT
 
@@ -25,13 +25,14 @@ namespace trans::trans_p2p
               ISerLisVec& lis, qintptr socketId);
         ~Input() override;
 
-    protected:
-        void run() override;
+    public slots:
+        void start();
 
     private:
         bool openFile(QFile& file, const QFlags<QIODevice::OpenMode::enum_type> mode);
         void createFile();
         void writeFile();
+        void cleanupSocket();
 
         view::ILoggerSPtr m_logger;
         std::string m_logIdent;
@@ -45,7 +46,10 @@ namespace trans::trans_p2p
         std::string m_fileName;
 
     private slots:
-        void onReceivedData();
+        void onDataReceived();
         void onDisconnected();
+
+    signals:
+        void finished();
     };
 }
